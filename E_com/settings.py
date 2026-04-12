@@ -3,7 +3,6 @@ from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
 
-# Charger les variables d'environnement (.env en local, ignoré sur Railway)
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -17,7 +16,7 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 # Autorise localhost pour le dev et ton futur domaine Railway
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
-# --- APPLIS ---
+# --- APPLI ---
 INSTALLED_APPS = [
     # WhiteNoise doit être au-dessus de staticfiles si possible
     'whitenoise.runserver_nostatic',
