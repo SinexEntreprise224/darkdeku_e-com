@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Catalogue des Tags — DarkDeku{% endblock %}
+
+{% block content %}
+
+<style>
+    .tags-container {
+        padding: 4rem 0 6rem;
+        max-width: 900px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .tags-header {
+        margin-bottom: 4rem;
+    }
+
+    .tags-header h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 3rem;
+        color: #F0EDE6;
+        margin-bottom: 1rem;
+    }
+
+    .tags-header p {
+        color: #C9A84C;
+        text-transform: uppercase;
+        letter-spacing: 0.3em;
+        font-size: 0.8rem;
+    }
+
+    /* —— Grille de Tags —— */
+    .tags-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-bottom: 4rem;
+    }
+
+    .tag-badge {
+        background: #16161A;
+        border: 1px solid rgba(201, 168, 76, 0.2);
+        border-radius: 50px;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        overflow: hidden; /* Pour que le lien ne dépasse pas du border-radius */
+    }
+
+    /* Style du lien à l'intérieur du badge */
+    .tag-link {
+        color: #F0EDE6;
+        text-decoration: none;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-family: 'Cormorant Garamond', serif;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        height: 100%;
+    }
+
+    .tag-badge:hover {
+        border-color: #C9A84C;
+        background: rgba(201, 168, 76, 0.08);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+
+    .tag-link span {
+        color: #C9A84C;
+        font-weight: bold;
+    }
+
+    /* —— Message Vide —— */
+    .empty-tags {
+        padding: 4rem;
+        background: #16161A;
+        border-radius: 20px;
+        border: 1px dashed rgba(255, 255, 255, 0.1);
+        color: #7A7875;
+    }
+
+    /* —— Bouton Ajouter —— */
+    .btn-add-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        background: #C9A84C;
+        color: #0E0E10;
+        padding: 1rem 2.5rem;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        transition: 0.3s;
+    }
+
+    .btn-add-tag:hover {
+        background: #E8C97A;
+        transform: scale(1.05);
+    }
+</style>
+
+<div class="container tags-container">
+    
+    <header class="tags-header">
+        <p>Organisation</p>
+        <h1>Explorer les Tags</h1>
+    </header>
+
+    {% if not tags %}
+        <div class="empty-tags">
+            <h3>Aucun tag pour l'instant</h3>
+            <p>Commence par organiser ton catalogue en ajoutant des étiquettes.</p>
+        </div>
+    {% else %}
+        <div class="tags-grid">
+            {% for tag in tags %}
+                <div class="tag-badge">
+                    <a href="{% url 'product_by_tag' tag.id %}" class="tag-link">
+                        <span>#</span>{{ tag.name }}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="add-tag-wrapper">
+        <a href="add/" class="btn-add-tag">
+            <i class="bi bi-plus-lg"></i> Créer un nouveau tag
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter un Tag — DarkDeku{% endblock %}
+
+{% block content %}
+
+<style>
+    .form-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 5rem 1rem;
+    }
+
+    .form-card {
+        background: #16161A;
+        border: 1px solid rgba(201, 168, 76, 0.1);
+        border-radius: 20px;
+        padding: 3rem;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    }
+
+    .form-card h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2.2rem;
+        color: #F0EDE6;
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-subtitle {
+        text-align: center;
+        color: #C9A84C;
+        font-size: 0.8rem;
+        margin-bottom: 2.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+    }
+
+    /* —— Stylisation du formulaire —— */
+    .form-card p {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-card label {
+        display: block;
+        color: #7A7875;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+    }
+
+    .form-card input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 0.8rem 1rem;
+        color: #F0EDE6;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    .form-card input:focus {
+        border-color: #C9A84C;
+        background: rgba(201, 168, 76, 0.05);
+    }
+
+    /* —— Bouton Enregistrer (Style btn-add) —— */
+    .btn-submit {
+        width: 100%;
+        background: rgba(46, 213, 115, 0.1);
+        color: #2ed573;
+        border: 1px solid rgba(46, 213, 115, 0.2);
+        padding: 1rem;
+        border-radius: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 1rem;
+    }
+
+    .btn-submit:hover {
+        background: #2ed573;
+        color: #0E0E10;
+        transform: translateY(-2px);
+    }
+
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 2rem;
+        color: #7A7875;
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+
+    .back-link:hover {
+        color: #C9A84C;
+    }
+</style>
+
+<div class="form-container">
+    <div class="form-card">
+        <h1>Nouveau Tag</h1>
+        <p class="form-subtitle">Organisation du catalogue</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            {{ form.as_p }}
+
+            <button type="submit" class="btn-submit">
+                Enregistrer le tag
+            </button>
+        </form>
+
+        <a href="{% url 'admin_index' %}" class="back-link">
+             Annuler et retourner au panel
+        </a>
+    </div>
+</div>
+
+{% endblock %}

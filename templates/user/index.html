@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Mon Profil — DarkDeku{% endblock %}
+
+{% block content %}
+
+<style>
+    .profile-wrap {
+        padding: 4rem 0 6rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    /* —— En-tête du Profil —— */
+    .profile-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .profile-header .avatar-circle {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #C9A84C, #8A6D2D);
+        border-radius: 50%;
+        margin: 0 auto 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: #0E0E10;
+        font-weight: 800;
+        text-transform: uppercase;
+        box-shadow: 0 10px 30px rgba(201, 168, 76, 0.2);
+    }
+
+    .profile-header h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2.5rem;
+        color: #F0EDE6;
+        margin: 0;
+    }
+
+    .role-badge {
+        display: inline-block;
+        margin-top: 0.5rem;
+        padding: 0.3rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        background: rgba(201, 168, 76, 0.1);
+        color: #C9A84C;
+        border: 1px solid rgba(201, 168, 76, 0.2);
+    }
+
+    /* —— Cartes d'Information —— */
+    .profile-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .info-card {
+        background: #16161A;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 2rem;
+    }
+
+    .info-card h3 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.5rem;
+        color: #C9A84C;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 0.5rem;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .info-row:last-child { border-bottom: none; }
+
+    .info-label {
+        color: #7A7875;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .info-value {
+        color: #F0EDE6;
+        font-weight: 500;
+    }
+
+    /* —— Section Actions —— */
+    .actions-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-profile {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 700;
+        transition: 0.3s;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-edit { background: #C9A84C; color: #0E0E10; border-color: #C9A84C; }
+    .btn-edit:hover { background: #E8C97A; transform: translateY(-3px); }
+
+    .btn-outline { background: transparent; color: #F0EDE6; }
+    .btn-outline:hover { background: rgba(255, 255, 255, 0.05); border-color: #C9A84C; }
+
+    .btn-danger { background: rgba(255, 71, 87, 0.1); color: #ff4757; border-color: rgba(255, 71, 87, 0.2); }
+    .btn-danger:hover { background: #ff4757; color: white; }
+</style>
+
+<div class="container">
+    <div class="profile-wrap">
+        
+        <header class="profile-header">
+            <div class="avatar-circle">
+                {{ user.username|slice:":1" }}
+            </div>
+            <h1>{{ user.username }}</h1>
+            <span class="role-badge">
+                {% if user.role == 'admin' %} Administrateur {% else %} Utilisateur {% endif %}
+            </span>
+        </header>
+
+        <div class="profile-grid">
+            <div class="info-card">
+                <h3>Informations personnelles</h3>
+                <div class="info-row">
+                    <span class="info-label">Prénom</span>
+                    <span class="info-value">{% if user.first_name %}{{ user.first_name }}{% else %}Non spécifié{% endif %}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Nom</span>
+                    <span class="info-value">{% if user.last_name %}{{ user.last_name }}{% else %}Non spécifié{% endif %}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">{{ user.email }}</span>
+                </div>
+            </div>
+
+            <div class="actions-group">
+                <a href="{% url 'edit_profile' %}" class="btn-profile btn-edit">
+                    Modifier le profil
+                </a>
+                <a href="{% url 'edit_password' %}" class="btn-profile btn-outline">
+                    Changer le mot de passe
+                </a>
+                <a href="{% url 'delete_account' %}" class="btn-profile btn-danger">
+                    Supprimer le compte
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

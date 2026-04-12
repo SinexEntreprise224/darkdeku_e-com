@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Marques & Partenaires — DarkDeku{% endblock %}
+
+{% block content %}
+
+<style>
+    .brands-container {
+        padding: 5rem 1rem;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .brands-header {
+        text-align: center;
+        margin-bottom: 5rem;
+    }
+
+    .brands-header h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 3.5rem;
+        color: #F0EDE6;
+        margin-bottom: 0.5rem;
+    }
+
+    .brands-header p {
+        color: #C9A84C;
+        text-transform: uppercase;
+        letter-spacing: 0.5em;
+        font-size: 0.75rem;
+    }
+
+    /* —— Grille des Marques —— */
+    .brands-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 2.5rem;
+        margin-bottom: 5rem;
+    }
+
+    .brand-item {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+        transition: 0.4s ease;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(5px);
+    }
+
+    .brand-item:hover {
+        background: rgba(201, 168, 76, 0.05);
+        border-color: #C9A84C;
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+    }
+
+    .brand-item i {
+        font-size: 1.5rem;
+        color: rgba(201, 168, 76, 0.4);
+        margin-bottom: 1rem;
+    }
+
+    .brand-item h2 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.6rem;
+        color: #F0EDE6;
+        margin: 0;
+        letter-spacing: 0.05em;
+    }
+
+    /* —— État Vide —— */
+    .brands-empty {
+        text-align: center;
+        padding: 5rem;
+        background: #16161A;
+        border-radius: 30px;
+        border: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+
+    /* —— Bouton Ajouter —— */
+    .brands-footer {
+        text-align: center;
+    }
+
+    .btn-brand-add {
+        display: inline-flex;
+        align-items: center;
+        gap: 1rem;
+        background: #C9A84C;
+        color: #0E0E10;
+        padding: 1.2rem 3rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        transition: 0.3s;
+    }
+
+    .btn-brand-add:hover {
+        background: #E8C97A;
+        transform: scale(1.05);
+        box-shadow: 0 10px 25px rgba(201, 168, 76, 0.3);
+    }
+</style>
+
+<div class="brands-container">
+    <header class="brands-header">
+        <p>L'excellence du choix</p>
+        <h1>Nos Marques</h1>
+    </header>
+
+    {% if not makes %}
+        <div class="brands-empty">
+            <i class="bi bi-shield-slash" style="font-size: 3rem; color: #7A7875; margin-bottom: 1.5rem; display: block;"></i>
+            <h3 style="color: #F0EDE6; font-family: 'Cormorant Garamond', serif;">Aucune marque référencée</h3>
+            <p style="color: #7A7875;">Commence à peupler ton catalogue de partenaires.</p>
+        </div>
+    {% else %}
+        <div class="brands-grid">
+            {% for make in makes %}
+                <a href="{% url 'product_by_make' make.id %}" class="brand-item">
+                    <i class="bi bi-patch-check"></i>
+                    <h2>{{ make }}</h2>
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="brands-footer">
+        <a href="add/" class="btn-brand-add">
+            <i class="bi bi-plus-lg"></i> Ajouter une marque
+        </a>
+    </div>
+</div>
+
+{% endblock %}

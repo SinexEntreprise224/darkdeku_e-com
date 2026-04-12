@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Panel Administration — DarkDeku{% endblock %}
+
+{% block content %}
+
+<style>
+    .admin-wrap { padding: 3rem 0 5rem; }
+
+    /* —— Header —— */
+    .admin-header {
+        border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+        padding-bottom: 2rem;
+        margin-bottom: 3rem;
+    }
+    .admin-header h1 { font-family: 'Cormorant Garamond', serif; font-size: 3rem; color: #F0EDE6; }
+    .admin-header span { color: #C9A84C; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.2em; }
+
+    /* —— Grid —— */
+    .admin-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 2rem;
+    }
+    .admin-section {
+        background: #16161A;
+        border: 1px solid rgba(201, 168, 76, 0.1);
+        border-radius: 20px;
+        padding: 2rem;
+        transition: 0.3s;
+    }
+    .admin-section:hover { border-color: rgba(201, 168, 76, 0.3); }
+
+    /* —— Title Bar & Add Button —— */
+    .section-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        padding-bottom: 1rem;
+    }
+    .section-title h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: #F0EDE6; margin: 0; }
+    
+    .count-badge {
+        background: rgba(201, 168, 76, 0.1);
+        color: #C9A84C;
+        padding: 0.2rem 0.6rem;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        margin-right: auto;
+        margin-left: 10px;
+    }
+
+    /* —— Buttons —— */
+    .btn-admin {
+        padding: 0.5rem 0.8rem;
+        border-radius: 8px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: 0.3s;
+        border: 1px solid transparent;
+        display: inline-block;
+    }
+
+    /* Nouvelle couleur pour Ajouter (Émeraude Doré) */
+    .btn-add { 
+        background: rgba(46, 213, 115, 0.1); 
+        color: #2ed573; 
+        border: 1px solid rgba(46, 213, 115, 0.2);
+    }
+    .btn-add:hover { background: #2ed573; color: #0E0E10; }
+
+    .btn-edit { background: rgba(255,255,255,0.05); color: #F0EDE6; }
+    .btn-edit:hover { background: rgba(255,255,255,0.1); }
+
+    .btn-delete { background: rgba(255, 71, 87, 0.1); color: #ff4757; }
+    .btn-delete:hover { background: #ff4757; color: white; }
+
+    .btn-view { border-color: rgba(201, 168, 76, 0.3); color: #C9A84C; }
+    .btn-view:hover { background: #C9A84C; color: #0E0E10; }
+
+    /* —— Item Cards —— */
+    .item-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .item-card:last-child { border-bottom: none; }
+    .item-info p { margin: 0; color: #F0EDE6; font-size: 0.95rem; }
+    .item-info small { color: #7A7875; }
+    .admin-actions { display: flex; gap: 0.5rem; }
+</style>
+
+<div class="container admin-wrap">
+
+    <header class="admin-header">
+        <span>Gestion du catalogue</span>
+        <h1>Panel Admin</h1>
+    </header>
+
+    <div class="admin-grid">
+
+        <section class="admin-section">
+            <div class="section-title">
+                <h2>Produits</h2>
+                <span class="count-badge">{{ products.count }}</span>
+                <a href="{% url 'add_product' %}" class="btn-admin btn-add">+ Ajouter</a>
+            </div>
+            {% for product in products %}
+                <div class="item-card">
+                    <div class="item-info">
+                        <p>{{ product.name }}</p>
+                        <small>{{ product.price }} FG</small>
+                    </div>
+                    <div class="admin-actions">
+                        <a href="{% url 'edit_product' product.slug %}" class="btn-admin btn-edit">Modifier</a>
+                        <a href="{% url 'delete_product' product.slug %}" class="btn-admin btn-delete">Supprimer</a>
+                    </div>
+                </div>
+            {% empty %}
+                <p style="color:#5A5855;">Aucun produit.</p>
+            {% endfor %}
+        </section>
+
+        <section class="admin-section">
+            <div class="section-title">
+                <h2>Catégories</h2>
+                <span class="count-badge">{{ categories.count }}</span>
+                <a href="{% url 'add_category' %}" class="btn-admin btn-add">+ Ajouter</a>
+            </div>
+            {% for cat in categories %}
+                <div class="item-card">
+                    <div class="item-info"><p>{{ cat.name }}</p></div>
+                    <div class="admin-actions">
+                        <a href="{% url 'edit_category' cat.id %}" class="btn-admin btn-edit">Modifier</a>
+                        <a href="{% url 'delete_category' cat.id %}" class="btn-admin btn-delete">Supprimer</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </section>
+
+        <section class="admin-section">
+            <div class="section-title">
+                <h2>Marques</h2>
+                <span class="count-badge">{{ makes.count }}</span>
+                <a href="{% url 'add_make' %}" class="btn-admin btn-add">+ Ajouter</a>
+            </div>
+            {% for make in makes %}
+                <div class="item-card">
+                    <div class="item-info"><p>{{ make.name }}</p></div>
+                    <div class="admin-actions">
+                        <a href="{% url 'edit_make' make.id %}" class="btn-admin btn-edit">Modifier</a>
+                        <a href="{% url 'delete_make' make.id %}" class="btn-admin btn-delete">Supprimer</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </section>
+
+        <section class="admin-section">
+            <div class="section-title">
+                <h2>Tags</h2>
+                <span class="count-badge">{{ tags.count }}</span>
+                <a href="{% url 'add_tag' %}" class="btn-admin btn-add">+ Ajouter</a>
+            </div>
+            {% for tag in tags %}
+                <div class="item-card">
+                    <div class="item-info"><p>#{{ tag.name }}</p></div>
+                    <div class="admin-actions">
+                        <a href="{% url 'edit_tag' tag.id %}" class="btn-admin btn-edit">Modifier</a>
+                        <a href="{% url 'delete_tag' tag.id %}" class="btn-admin btn-delete">Supprimer</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </section>
+        <section class="admin-section">
+            <div class="section-title">
+                <h2>Commandes</h2>
+                <span class="count-badge">{{ orders.count }}</span>
+            </div>
+            {% for order in orders %}
+                <div class="item-card">
+                    <div class="item-info">
+                        <p>{{ order }}</p>
+                        <small>Par : {{ order.user.username }} — {{ order.created_at|date:"d/m/Y H:i" }}</small>
+                    </div>                     
+                </div>
+            {% empty %}
+                <p class="empty-msg">Aucune commande enregistrée pour le moment.</p>
+            {% endfor %}
+        </section>
+        <section class="admin-section">
+            <div class="section-title">
+                <h2>Utilisateurs</h2>
+                <span class="count-badge">{{ users.count }}</span>
+            </div>
+            {% for user in users %}
+                <div class="item-card">
+                    <div class="item-info">
+                        <p>{{ user.username }}</p>
+                        <small>{{ user.total_spent|default:0 }} FG</small>
+                    </div>
+                    <div class="admin-actions">
+                        <a href="{% url 'delete_user' user.id %}" class="btn-admin btn-delete">Supprimer</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </section>
+
+    </div>
+</div>
+
+{% endblock %}

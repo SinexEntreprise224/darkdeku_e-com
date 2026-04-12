@@ -1,0 +1,493 @@
+{% extends "base.html" %}
+{% block title %}Mon Panier — DarkDeku{% endblock %}
+{% block content %}
+
+<style>
+    .cart-wrap {
+        padding: 3rem 0 5rem;
+    }
+
+    /* ── Header ── */
+    .cart-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 2.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(201,168,76,0.2);
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .cart-title-block .eyebrow {
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: #C9A84C;
+        margin-bottom: 0.4rem;
+    }
+
+    .cart-title-block h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(1.8rem, 4vw, 2.8rem);
+        font-weight: 700;
+        color: #F0EDE6;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .cart-count {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #7A7875;
+        letter-spacing: 0.04em;
+        align-self: flex-end;
+        padding-bottom: 4px;
+    }
+
+    .cart-count strong {
+        color: #C9A84C;
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 5rem 2rem;
+        text-align: center;
+        border: 1px dashed rgba(201,168,76,0.25);
+        border-radius: 20px;
+        background: rgba(201,168,76,0.03);
+        animation: fadeUp 0.4s ease both;
+    }
+
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(201,168,76,0.1);
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-icon i { font-size: 2rem; color: #C9A84C; }
+
+    .empty-state h3 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #F0EDE6;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p { font-size: 0.88rem; color: #7A7875; margin-bottom: 1.75rem; }
+
+    .btn-browse {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.7rem 1.5rem;
+        background: #C9A84C;
+        border: none;
+        border-radius: 10px;
+        color: #0E0E10;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-browse:hover  { background: #E8C97A; color: #0E0E10; }
+    .btn-browse:active { transform: scale(0.98); }
+
+    /* ── Cart table card ── */
+    .cart-card {
+        background: #16161A;
+        border: 1px solid rgba(201,168,76,0.18);
+        border-radius: 20px;
+        overflow: hidden;
+        animation: fadeUp 0.4s ease both;
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(18px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Table ── */
+    .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .cart-table thead tr {
+        border-bottom: 1px solid rgba(201,168,76,0.15);
+    }
+
+    .cart-table thead th {
+        padding: 1rem 1.25rem;
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #5A5855;
+        white-space: nowrap;
+    }
+
+    .cart-table tbody tr {
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+        transition: background 0.2s;
+    }
+
+    .cart-table tbody tr:last-child { border-bottom: none; }
+    .cart-table tbody tr:hover { background: rgba(201,168,76,0.04); }
+
+    .cart-table td {
+        padding: 1.1rem 1.25rem;
+        font-size: 0.88rem;
+        color: #F0EDE6;
+        vertical-align: middle;
+    }
+
+    /* Product cell */
+    .product-cell {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .product-thumb {
+        width: 58px;
+        height: 58px;
+        border-radius: 10px;
+        object-fit: cover;
+        background: #1C1C20;
+        flex-shrink: 0;
+        border: 1px solid rgba(201,168,76,0.12);
+    }
+
+    .product-thumb-placeholder {
+        width: 58px;
+        height: 58px;
+        border-radius: 10px;
+        background: #1C1C20;
+        border: 1px solid rgba(201,168,76,0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .product-thumb-placeholder i { font-size: 1.2rem; color: #2E2E34; }
+
+    .product-name {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #F0EDE6;
+        line-height: 1.3;
+    }
+
+    /* Price / total */
+    .cell-price  { color: #7A7875; font-size: 0.88rem; white-space: nowrap; }
+    .cell-total  { color: #C9A84C; font-weight: 700; font-size: 0.95rem; white-space: nowrap; }
+
+    /* Quantity badge */
+    .qty-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        padding: 0.3rem 0.7rem;
+        background: rgba(201,168,76,0.1);
+        border: 1px solid rgba(201,168,76,0.25);
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #C9A84C;
+    }
+
+    /* Action buttons */
+    .action-cell { white-space: nowrap; }
+
+    .btn-detail, .btn-remove {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.42rem 0.85rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
+        border: 1px solid;
+    }
+
+    .btn-detail {
+        color: #7A7875;
+        border-color: rgba(255,255,255,0.1);
+        background: transparent;
+    }
+
+    .btn-detail:hover {
+        color: #F0EDE6;
+        border-color: rgba(255,255,255,0.25);
+        background: rgba(255,255,255,0.05);
+    }
+
+    .btn-remove {
+        color: #c0564a;
+        border-color: rgba(192,86,74,0.3);
+        background: transparent;
+    }
+
+    .btn-remove:hover {
+        color: #e07068;
+        border-color: rgba(192,86,74,0.6);
+        background: rgba(192,86,74,0.08);
+    }
+
+    /* ── Cart footer ── */
+    .cart-footer {
+        padding: 1.5rem 1.75rem;
+        border-top: 1px solid rgba(201,168,76,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        background: rgba(201,168,76,0.03);
+    }
+
+    .total-block .total-label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #5A5855;
+        margin-bottom: 0.25rem;
+    }
+
+    .total-block .total-amount {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #C9A84C;
+        line-height: 1;
+    }
+
+    .total-block .total-amount sup {
+        font-size: 0.85rem;
+        font-family: 'Nunito Sans', sans-serif;
+        font-weight: 600;
+        color: #7A7875;
+        margin-left: 4px;
+        vertical-align: super;
+    }
+
+    .footer-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-empty {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.65rem 1.15rem;
+        background: transparent;
+        border: 1px solid rgba(192,86,74,0.35);
+        border-radius: 10px;
+        color: #c0564a;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 0.82rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .btn-empty:hover {
+        background: rgba(192,86,74,0.1);
+        border-color: rgba(192,86,74,0.6);
+        color: #e07068;
+    }
+
+    .btn-order {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.7rem 2rem;
+        background: #C9A84C;
+        border: none;
+        border-radius: 10px;
+        color: #0E0E10;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 0.88rem;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-order:hover  { background: #E8C97A; }
+    .btn-order:active { transform: scale(0.98); }
+
+    /* ── Back link ── */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-top: 2rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #5A5855;
+        text-decoration: none;
+        transition: color 0.2s;
+        letter-spacing: 0.04em;
+    }
+
+    .back-link:hover { color: #C9A84C; }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+        .cart-table thead { display: none; }
+        .cart-table, .cart-table tbody, .cart-table tr, .cart-table td { display: block; width: 100%; }
+        .cart-table tr { padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .cart-table td { padding: 0.2rem 0; border: none; }
+        .cart-table td::before {
+            content: attr(data-label);
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #5A5855;
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+        .cart-table td:first-child::before { content: ''; }
+        .product-cell { margin-bottom: 0.75rem; }
+        .cart-footer { flex-direction: column; align-items: flex-start; }
+    }
+</style>
+
+<div class="cart-wrap">
+
+    <div class="cart-header">
+        <div class="cart-title-block">
+            <p class="eyebrow">Votre sélection</p>
+            <h1>Mon Panier</h1>
+        </div>
+        {% if orders %}
+            <span class="cart-count">
+                <strong>{{ orders|length }}</strong> article{% if orders|length > 1 %}s{% endif %}
+            </span>
+        {% endif %}
+    </div>
+
+    {% if not orders %}
+
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="bi bi-bag-x"></i>
+            </div>
+            <h3>Panier vide</h3>
+            <p>Vous n'avez pas encore ajouté de produits à votre panier.</p>
+            <a href="{% url 'index' %}" class="btn-browse">
+                <i class="bi bi-grid-3x3-gap"></i> Parcourir le catalogue
+            </a>
+        </div>
+
+    {% else %}
+
+        <div class="cart-card">
+            <div style="overflow-x: auto;">
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Prix unit.</th>
+                            <th>Quantité</th>
+                            <th>Total</th>
+                            <th style="text-align:center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td data-label="Produit">
+                                <div class="product-cell">
+                                    {% if order.product.image %}
+                                        <img src="{{ order.product.image.url }}"
+                                             alt="{{ order.product.name }}"
+                                             class="product-thumb">
+                                    {% else %}
+                                        <div class="product-thumb-placeholder">
+                                            <i class="bi bi-image"></i>
+                                        </div>
+                                    {% endif %}
+                                    <span class="product-name">{{ order.product.name }}</span>
+                                </div>
+                            </td>
+                            <td class="cell-price" data-label="Prix unit.">
+                                {{ order.product.price }} <small style="color:#5A5855;">FG</small>
+                            </td>
+                            <td data-label="Quantité">
+                                <span class="qty-badge">{{ order.quantity }}</span>
+                            </td>
+                            <td class="cell-total" data-label="Total">
+                                {% widthratio order.product.price 1 order.quantity %} <small style="color:#A88C3A;font-weight:400;">FG</small>
+                            </td>
+                            <td class="action-cell" data-label="Actions" style="text-align:center;">
+                                <div style="display:inline-flex;gap:0.5rem;">
+                                    <a href="{% url 'detail' order.product.slug %}" class="btn-detail">
+                                        <i class="bi bi-eye"></i> Détail
+                                    </a>
+                                    <a href="{% url 'leave_to_cart' order.product.slug %}" class="btn-remove">
+                                        <i class="bi bi-trash3"></i> Retirer
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="cart-footer">
+                <div class="total-block">
+                    <p class="total-label">Total panier</p>
+                    <p class="total-amount">{{ total }}<sup>FG</sup></p>
+                </div>
+                <div class="footer-actions">
+                    <a href="{% url 'empty_cart' %}" class="btn-empty">
+                        <i class="bi bi-trash3"></i> Vider le panier
+                    </a>
+                    <button class="btn-order">
+                        <i class="bi bi-bag-check"></i> Commander
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+
+    <a href="{% url 'index' %}" class="back-link">
+        <i class="bi bi-arrow-left"></i> Retour au catalogue
+    </a>
+
+</div>
+
+{% endblock %}

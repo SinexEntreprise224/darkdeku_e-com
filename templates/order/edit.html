@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}Commander {{ product.name }} — DarkDeku{% endblock %}
+
+{% block content %}
+
+<style>
+    .order-container {
+        padding: 5rem 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .order-card {
+        background: #16161A;
+        border: 1px solid rgba(201, 168, 76, 0.1);
+        border-radius: 30px;
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+        max-width: 900px;
+        width: 100%;
+        box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+    }
+
+    /* —— Section Image —— */
+    .order-image-side {
+        flex: 1;
+        background: #0E0E10;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .order-image-side img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 15px;
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+    }
+
+    /* —— Section Détails —— */
+    .order-details-side {
+        flex: 1.2;
+        padding: 4rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .order-details-side h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2.8rem;
+        color: #F0EDE6;
+        margin-bottom: 0.5rem;
+    }
+
+    .order-price {
+        font-size: 1.5rem;
+        color: #C9A84C;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        display: block;
+    }
+
+    .order-stock {
+        font-size: 0.85rem;
+        color: #7A7875;
+        margin-bottom: 2.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    .stock-number {
+        color: #F0EDE6;
+        font-weight: 800;
+    }
+
+    /* —— Formulaire —— */
+    .order-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .quantity-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .quantity-group label {
+        color: #7A7875;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .input-quantity {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1rem;
+        color: #F0EDE6;
+        font-size: 1.1rem;
+        width: 100%;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    .input-quantity:focus {
+        border-color: #C9A84C;
+        background: rgba(201, 168, 76, 0.05);
+    }
+
+    .btn-buy {
+        background: #C9A84C;
+        color: #0E0E10;
+        border: none;
+        padding: 1.2rem;
+        border-radius: 14px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 1rem;
+    }
+
+    .btn-buy:hover {
+        background: #E8C97A;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(201, 168, 76, 0.2);
+    }
+
+    .cancel-purchase {
+        text-align: center;
+        margin-top: 2rem;
+        color: #7A7875;
+        text-decoration: none;
+        font-size: 0.8rem;
+        transition: 0.3s;
+    }
+
+    .cancel-purchase:hover {
+        color: #F0EDE6;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .order-card {
+            flex-direction: column;
+        }
+        .order-image-side {
+            border-right: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    }
+</style>
+
+<div class="order-container">
+    <div class="order-card">
+        
+        <div class="order-image-side">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+                <img src="https://via.placeholder.com/400x400" alt="Image non disponible">
+            {% endif %}
+        </div>
+
+        <div class="order-details-side">
+            <h1>{{ product.name }}</h1>
+            <span class="order-price">{{ product.price }} GNf</span>
+            
+            <p class="order-stock">
+                Quantité disponible : <span class="stock-number">{{ product.quantity }}</span> unités
+            </p>
+
+            <form method="POST" class="order-form">
+                {% csrf_token %}
+                
+                <div class="quantity-group">
+                    <label for="quantity">Quantité souhaitée</label>
+                    <input type="number" 
+                           id="quantity"
+                           name="quantity" 
+                           min="1" 
+                           max="{{ product.quantity }}" 
+                           placeholder="Max: {{ product.quantity }}" 
+                           class="input-quantity"
+                           required>
+                </div>
+
+                <button type="submit" class="btn-buy">
+                    Confirmer l'achat
+                </button>
+            </form>
+
+            <a href="{% url 'index' %}" class="cancel-purchase">
+                <i class="bi bi-arrow-left"></i> Retour à la boutique
+            </a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

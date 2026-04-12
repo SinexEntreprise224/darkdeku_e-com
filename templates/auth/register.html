@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Inscription — DarkDeku{% endblock %}
+{% block content %}
+
+<style>
+    .auth-wrap {
+        min-height: calc(100vh - 64px - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1rem;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 460px;
+        background: #16161A;
+        border: 1px solid rgba(201,168,76,0.18);
+        border-radius: 20px;
+        padding: 2.5rem 2.25rem;
+        animation: fadeUp 0.45s ease both;
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .auth-eyebrow {
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: #C9A84C;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #F0EDE6;
+        margin-bottom: 0.4rem;
+        line-height: 1.15;
+    }
+
+    .auth-subtitle {
+        font-size: 0.83rem;
+        color: #7A7875;
+        margin-bottom: 2rem;
+    }
+
+    /* ── Already logged in ── */
+    .auth-logged {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1rem;
+        padding: 1rem 0;
+    }
+
+    .auth-logged-icon {
+        width: 64px;
+        height: 64px;
+        background: rgba(201,168,76,0.12);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        color: #C9A84C;
+    }
+
+    .auth-logged p {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #F0EDE6;
+        margin: 0;
+    }
+
+    .auth-logged small {
+        font-size: 0.82rem;
+        color: #7A7875;
+    }
+
+    /* ── Crispy form overrides ── */
+    .auth-card label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #7A7875;
+        margin-bottom: 0.4rem;
+    }
+
+    .auth-card input[type="text"],
+    .auth-card input[type="email"],
+    .auth-card input[type="password"] {
+        width: 100%;
+        background: #0E0E10;
+        border: 1px solid rgba(201,168,76,0.2);
+        border-radius: 10px;
+        padding: 0.7rem 1rem;
+        color: #F0EDE6;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        margin-bottom: 1.1rem;
+    }
+
+    .auth-card input[type="text"]:focus,
+    .auth-card input[type="email"]:focus,
+    .auth-card input[type="password"]:focus {
+        border-color: #C9A84C;
+        box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+    }
+
+    .auth-card input[type="text"]::placeholder,
+    .auth-card input[type="email"]::placeholder,
+    .auth-card input[type="password"]::placeholder {
+        color: #3A3A3F;
+    }
+
+    .auth-card input[type="checkbox"] {
+        accent-color: #C9A84C;
+        width: 15px;
+        height: 15px;
+        margin-right: 0.4rem;
+        cursor: pointer;
+    }
+
+    /* Validation */
+    .auth-card .invalid-feedback,
+    .auth-card .errorlist {
+        font-size: 0.78rem;
+        color: #c0564a;
+        margin-top: -0.75rem;
+        margin-bottom: 0.75rem;
+        list-style: none;
+        padding: 0;
+    }
+
+    /* Password strength hints */
+    .auth-card .form-text,
+    .auth-card small.text-muted {
+        font-size: 0.74rem;
+        color: #4A4845;
+        display: block;
+        margin-top: -0.8rem;
+        margin-bottom: 0.9rem;
+        line-height: 1.5;
+    }
+
+    /* Submit */
+    .btn-auth {
+        display: block;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        margin-top: 0.75rem;
+        background: #C9A84C;
+        border: none;
+        border-radius: 10px;
+        color: #0E0E10;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 0.88rem;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-auth:hover  { background: #E8C97A; }
+    .btn-auth:active { transform: scale(0.98); }
+
+    /* Divider */
+    .auth-divider {
+        height: 1px;
+        background: rgba(201,168,76,0.12);
+        margin: 1.75rem 0;
+    }
+
+    /* Footer link */
+    .auth-footer {
+        text-align: center;
+        font-size: 0.82rem;
+        color: #7A7875;
+    }
+
+    .auth-footer a {
+        color: #C9A84C;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+    }
+
+    .auth-footer a:hover { color: #E8C97A; }
+
+    /* Perks strip */
+    .auth-perks {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .auth-perk {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.75rem;
+        color: #7A7875;
+    }
+
+    .auth-perk i {
+        color: #C9A84C;
+        font-size: 0.85rem;
+    }
+</style>
+
+<div class="auth-wrap">
+    <div class="auth-card">
+
+        {% if user.is_authenticated %}
+
+            <div class="auth-logged">
+                <div class="auth-logged-icon">
+                    <i class="bi bi-person-check"></i>
+                </div>
+                <div>
+                    <p>Tu es déjà connecté</p>
+                    <small>{{ user.username }}</small>
+                </div>
+                <a href="{% url 'index' %}" class="btn-auth"
+                   style="text-decoration:none;display:inline-block;width:auto;padding:0.65rem 1.75rem;margin-top:0.5rem;">
+                    Retour au catalogue
+                </a>
+            </div>
+
+        {% else %}
+
+            <p class="auth-eyebrow">Nouveau compte</p>
+            <h1 class="auth-title">Rejoindre DarkDeku</h1>
+            <p class="auth-subtitle">Créez votre compte en quelques secondes.</p>
+
+            <div class="auth-perks">
+                <span class="auth-perk"><i class="bi bi-bag-check"></i> Commandes simplifiées</span>
+                <span class="auth-perk"><i class="bi bi-bell"></i> Suivi en temps réel</span>
+                <span class="auth-perk"><i class="bi bi-shield-check"></i> Paiement sécurisé</span>
+            </div>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn-auth">
+                    <i class="bi bi-person-plus" style="font-size:1em;vertical-align:-1px;margin-right:4px;"></i>
+                    Créer mon compte
+                </button>
+            </form>
+
+            <div class="auth-divider"></div>
+
+            <p class="auth-footer">
+                Déjà inscrit ?
+                <a href="{% url 'login' %}">Connectez-vous</a>
+            </p>
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

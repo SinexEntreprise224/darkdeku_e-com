@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DarkDeku{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --gold:        #C9A84C;
+            --gold-light:  #E8C97A;
+            --gold-dim:    rgba(201,168,76,0.15);
+            --dark-bg:     #0E0E10;
+            --surface:     #16161A;
+            --surface-2:   #1E1E23;
+            --border:      rgba(201,168,76,0.18);
+            --text-main:   #F0EDE6;
+            --text-muted:  #7A7875;
+            --nav-h:       64px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Nunito Sans', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* NAVBAR */
+        .site-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: var(--nav-h);
+            display: flex;
+            align-items: center;
+            background: rgba(14,14,16,0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-inner {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .nav-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            white-space: nowrap;
+        }
+
+        .nav-brand .brand-dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background: var(--gold);
+            border-radius: 50%;
+            margin-bottom: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.15rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.45rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s, background 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+            background: rgba(255,255,255,0.06);
+        }
+
+        .nav-links .nav-greeting {
+            padding: 0.45rem 0.8rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .nav-links .nav-greeting strong {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .nav-divider {
+            width: 1px;
+            height: 18px;
+            background: var(--border);
+            margin: 0 0.4rem;
+        }
+
+        .nav-btn-cart { color: var(--text-main) !important; }
+        .nav-btn-admin { color: var(--gold) !important; }
+
+        .nav-btn-logout {
+            color: #c0564a !important;
+            border: 1px solid rgba(192,86,74,0.35);
+        }
+
+        .nav-btn-logout:hover {
+            background: rgba(192,86,74,0.12) !important;
+            color: #e07068 !important;
+        }
+
+        .nav-btn-register {
+            background: var(--gold-dim);
+            color: var(--gold) !important;
+            border: 1px solid var(--border);
+        }
+
+        .nav-btn-register:hover {
+            background: var(--gold) !important;
+            color: #0E0E10 !important;
+        }
+
+        /* Mobile toggle */
+        .nav-toggle {
+            display: none;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-main);
+            padding: 0.4rem 0.55rem;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        /* Mobile drawer */
+        .nav-drawer {
+            display: none;
+            position: fixed;
+            top: var(--nav-h);
+            left: 0; right: 0;
+            background: rgba(14,14,16,0.97);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 1.5rem 1.5rem;
+            z-index: 99;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .nav-drawer.open { display: flex; }
+
+        .nav-drawer a, .nav-drawer .nav-greeting {
+            padding: 0.7rem 0.9rem;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-drawer a:hover {
+            color: var(--text-main);
+            background: rgba(255,255,255,0.06);
+        }
+
+        @media (max-width: 992px) {
+            .nav-links { display: none; }
+            .nav-toggle { display: flex; align-items: center; }
+        }
+
+        /* FLASH MESSAGES */
+        .messages-wrap {
+            max-width: 1280px;
+            margin: 1.25rem auto 0;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .flash-msg {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.9rem 1.1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--gold);
+            border-radius: 10px;
+            font-size: 0.87rem;
+            color: var(--text-main);
+            animation: slideDown 0.3s ease;
+        }
+
+        .flash-msg i { color: var(--gold); }
+        .flash-close { margin-left: auto; background: transparent; border: none; color: var(--text-muted); cursor: pointer; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .site-main {
+            flex: 1;
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .site-footer {
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            padding: 2rem 1.5rem;
+        }
+
+        .footer-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .footer-brand { font-family: 'Cormorant Garamond', serif; color: var(--text-main); font-weight: 700; }
+    </style>
+</head>
+<body>
+
+    <nav class="site-nav">
+        <div class="nav-inner">
+            <a href="{% url 'index' %}" class="nav-brand">
+                DarkDeku<span class="brand-dot"></span>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="{% url 'index' %}"><i class="bi bi-grid-3x3-gap"></i> Catalogue</a></li>
+
+                {% if user.is_authenticated %}
+                    <li><div class="nav-divider"></div></li>
+                    <li><span class="nav-greeting">Salut, <strong>{{ user.username }}</strong></span></li>
+                    <li><a href="{% url 'cart' %}" class="nav-btn-cart"><i class="bi bi-bag"></i> Panier</a></li>
+                    <li><a href="{% url 'all_orders' %}"><i class="bi bi-receipt"></i> Mes Commandes</a></li>
+                    <li><a href="{% url 'profile' %}"><i class="bi bi-person"></i> Profil</a></li>
+
+                    {% if user.role == 'admin' %}
+                        <li><a href="{% url 'admin_index' %}" class="nav-btn-admin"><i class="bi bi-sliders"></i> Admin</a></li>
+                    {% endif %}
+
+                    <li><div class="nav-divider"></div></li>
+                    <li><a href="{% url 'logout' %}" class="nav-btn-logout"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
+                {% else %}
+                    <li><div class="nav-divider"></div></li>
+                    <li><a href="{% url 'login' %}"><i class="bi bi-person"></i> Connexion</a></li>
+                    <li><a href="{% url 'register' %}" class="nav-btn-register"><i class="bi bi-person-plus"></i> Inscription</a></li>
+                {% endif %}
+            </ul>
+
+            <button class="nav-toggle" id="navToggle"><i class="bi bi-list" id="toggleIcon"></i></button>
+        </div>
+    </nav>
+
+    <div class="nav-drawer" id="navDrawer">
+        <a href="{% url 'index' %}"><i class="bi bi-grid-3x3-gap"></i> Catalogue</a>
+        {% if user.is_authenticated %}
+            <span class="nav-greeting">Salut, <strong>{{ user.username }}</strong></span>
+            <a href="{% url 'cart' %}"><i class="bi bi-bag"></i> Panier</a>
+            <a href="{% url 'all_orders' %}"><i class="bi bi-receipt"></i> Mes Commandes</a>
+            <a href="{% url 'profile' %}"><i class="bi bi-person"></i> Profil</a>
+            {% if user.role == 'admin' %}
+                <a href="{% url 'admin_index' %}" style="color:var(--gold);"><i class="bi bi-sliders"></i> Admin</a>
+            {% endif %}
+            <a href="{% url 'logout' %}" style="color:#c0564a;"><i class="bi bi-box-arrow-right"></i> Déconnexion</a>
+        {% else %}
+            <a href="{% url 'login' %}"><i class="bi bi-person"></i> Connexion</a>
+            <a href="{% url 'register' %}" style="color:var(--gold);"><i class="bi bi-person-plus"></i> Inscription</a>
+        {% endif %}
+    </div>
+
+    {% if messages %}
+        <div class="messages-wrap">
+            {% for message in messages %}
+                <div class="flash-msg">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <span>{{ message }}</span>
+                    <button class="flash-close" onclick="this.parentElement.remove()"><i class="bi bi-x"></i></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main class="site-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <span class="footer-brand">DarkDeku</span>
+            <span>&copy; 2026 Tous droits réservés</span>
+        </div>
+    </footer>
+
+    <script>
+        const toggle = document.getElementById('navToggle');
+        const drawer = document.getElementById('navDrawer');
+        const icon   = document.getElementById('toggleIcon');
+
+        toggle.addEventListener('click', () => {
+            const open = drawer.classList.toggle('open');
+            icon.className = open ? 'bi bi-x-lg' : 'bi bi-list';
+        });
+    </script>
+</body>
+</html>

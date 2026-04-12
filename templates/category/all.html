@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Collections — DarkDeku{% endblock %}
+
+{% block content %}
+
+<style>
+    .cat-container {
+        padding: 5rem 1rem;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .cat-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+
+    .cat-header h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 3.5rem;
+        color: #F0EDE6;
+        margin-bottom: 0.5rem;
+    }
+
+    .cat-header p {
+        color: #C9A84C;
+        text-transform: uppercase;
+        letter-spacing: 0.4em;
+        font-size: 0.8rem;
+    }
+
+    /* —— Grille de Cartes —— */
+    .cat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+
+    .cat-card {
+        background: #16161A;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 2.5rem;
+        border-radius: 20px;
+        text-align: center;
+        transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        text-decoration: none;
+        display: block;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cat-card::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(135deg, rgba(201, 168, 76, 0.1), transparent);
+        opacity: 0;
+        transition: 0.3s;
+    }
+
+    .cat-card:hover {
+        transform: translateY(-10px);
+        border-color: #C9A84C;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .cat-card:hover::before {
+        opacity: 1;
+    }
+
+    .cat-card h2 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.8rem;
+        color: #F0EDE6;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .cat-card .explore-txt {
+        display: block;
+        margin-top: 1rem;
+        font-size: 0.7rem;
+        color: #C9A84C;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        opacity: 0.6;
+        transition: 0.3s;
+    }
+
+    .cat-card:hover .explore-txt {
+        opacity: 1;
+        letter-spacing: 0.3em;
+    }
+
+    /* —— État Vide —— */
+    .cat-empty {
+        background: #16161A;
+        padding: 4rem;
+        border-radius: 20px;
+        text-align: center;
+        border: 1px dashed rgba(201, 168, 76, 0.3);
+    }
+
+    /* —— Bouton Ajouter —— */
+    .cat-footer {
+        text-align: center;
+    }
+
+    .btn-add-cat {
+        display: inline-flex;
+        align-items: center;
+        gap: 1rem;
+        background: transparent;
+        color: #C9A84C;
+        border: 1px solid #C9A84C;
+        padding: 1rem 3rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        transition: 0.3s;
+    }
+
+    .btn-add-cat:hover {
+        background: #C9A84C;
+        color: #0E0E10;
+        box-shadow: 0 10px 20px rgba(201, 168, 76, 0.2);
+    }
+</style>
+
+<div class="cat-container">
+    <header class="cat-header">
+        <p>L'Art de la Sélection</p>
+        <h1>Nos Collections</h1>
+    </header>
+
+    {% if not categories %}
+        <div class="cat-empty">
+            <h3 style="color: #F0EDE6; font-family: 'Cormorant Garamond', serif; font-size: 1.5rem;">Aucune catégorie définie</h3>
+            <p style="color: #7A7875;">Le catalogue attend ses premières fondations.</p>
+        </div>
+    {% else %}
+        <div class="cat-grid">
+            {% for category in categories %}
+                <a href="{% url 'product_by_category' category.id %}" class="cat-card">
+                    <h2>{{ category.name }}</h2>
+                    <span class="explore-txt">Découvrir la collection</span>
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="cat-footer">
+        <a href="{% url 'cart' %}" class="btn-add-cat">
+            <i class="bi bi-plus-circle"></i> Ajouter une nouvelle collection
+        </a>
+    </div>
+</div>
+
+{% endblock %}

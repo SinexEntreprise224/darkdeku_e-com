@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Administration — Supprimer {{ user.username }}{% endblock %}
+
+{% block content %}
+
+<style>
+    .admin-danger-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 6rem 1rem;
+    }
+
+    .admin-danger-card {
+        background: #16161A;
+        border: 1px solid rgba(255, 71, 87, 0.3);
+        border-radius: 24px;
+        padding: 3.5rem;
+        width: 100%;
+        max-width: 550px;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    }
+
+    .user-avatar-warning {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 71, 87, 0.1);
+        color: #ff4757;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+        font-weight: 800;
+        border: 2px solid rgba(255, 71, 87, 0.2);
+    }
+
+    .admin-danger-card h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2rem;
+        color: #F0EDE6;
+        line-height: 1.3;
+        margin-bottom: 1rem;
+    }
+
+    .username-highlight {
+        color: #ff4757;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+    }
+
+    .admin-danger-card p {
+        color: #7A7875;
+        font-size: 0.95rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .admin-actions-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .btn-admin-delete {
+        background: #ff4757;
+        color: white;
+        border: none;
+        padding: 1.2rem;
+        border-radius: 14px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-admin-delete:hover {
+        background: #ff6b81;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(255, 71, 87, 0.2);
+    }
+
+    .btn-admin-cancel {
+        background: transparent;
+        color: #F0EDE6;
+        padding: 1.2rem;
+        border-radius: 14px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: 0.3s;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-admin-cancel:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: #C9A84C;
+        color: #C9A84C;
+    }
+</style>
+
+<div class="admin-danger-container">
+    <div class="admin-danger-card">
+        <div class="user-avatar-warning">
+            {{ user.username|slice:":1"|upper }}
+        </div>
+        
+        <h1>Supprimer l'utilisateur <br> <span class="username-highlight">{{ user.username }}</span> ?</h1>
+        
+        <p>Tu es sur le point de supprimer ce compte de la base de données. Cette action est irréversible et l'utilisateur perdra l'accès à ses commandes et son profil immédiatement.</p>
+
+        <div class="admin-actions-stack">
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn-admin-delete w-100">
+                    Confirmer la suppression
+                </button>
+            </form>
+            
+            <a href="{% url 'admin_index' %}" class="btn-admin-cancel">
+                Annuler et retourner au panel
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

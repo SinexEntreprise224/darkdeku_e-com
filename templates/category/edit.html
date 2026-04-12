@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier Collection — {{ category.name }}{% endblock %}
+
+{% block content %}
+
+<style>
+    .edit-cat-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 5rem 1rem;
+    }
+
+    .edit-cat-card {
+        background: #16161A;
+        border: 1px solid rgba(201, 168, 76, 0.1);
+        border-radius: 24px;
+        padding: 3.5rem;
+        width: 100%;
+        max-width: 550px;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+    }
+
+    .edit-cat-card h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2.5rem;
+        color: #F0EDE6;
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .edit-cat-subtitle {
+        text-align: center;
+        color: #C9A84C;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3em;
+        margin-bottom: 3rem;
+        display: block;
+    }
+
+    /* —— Stylisation du Formulaire —— */
+    .edit-cat-card p {
+        margin-bottom: 1.8rem;
+    }
+
+    .edit-cat-card label {
+        display: block;
+        color: #7A7875;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 0.6rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .edit-cat-card input, 
+    .edit-cat-card select {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 1rem;
+        color: #F0EDE6;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    .edit-cat-card input:focus {
+        border-color: #C9A84C;
+        background: rgba(201, 168, 76, 0.04);
+        box-shadow: 0 0 15px rgba(201, 168, 76, 0.1);
+    }
+
+    /* —— Bouton de Mise à jour —— */
+    .btn-update-cat {
+        width: 100%;
+        background: transparent;
+        color: #F0EDE6;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1.1rem;
+        border-radius: 14px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 1rem;
+    }
+
+    .btn-update-cat:hover {
+        background: #F0EDE6;
+        color: #0E0E10;
+        transform: translateY(-3px);
+    }
+
+    .cancel-link {
+        display: block;
+        text-align: center;
+        margin-top: 2rem;
+        color: #7A7875;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: 0.3s;
+    }
+
+    .cancel-link:hover {
+        color: #C9A84C;
+    }
+</style>
+
+<div class="edit-cat-container">
+    <div class="edit-cat-card">
+        <h1>Modification</h1>
+        <span class="edit-cat-subtitle">Collection : {{ category.name }}</span>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-content">
+                {{ form.as_p }}
+            </div>
+
+            <button type="submit" class="btn-update-cat">
+                Appliquer les changements
+            </button>
+        </form>
+
+        <a href="{% url 'admin_index' %}" class="cancel-link">
+            <i class="bi bi-x-circle"></i> Abandonner les modifications
+        </a>
+    </div>
+</div>
+
+{% endblock %}

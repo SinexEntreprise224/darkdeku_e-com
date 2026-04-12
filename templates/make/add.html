@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Nouvelle Marque — DarkDeku{% endblock %}
+
+{% block content %}
+
+<style>
+    .brand-form-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 5rem 1rem;
+    }
+
+    .brand-card {
+        background: #16161A;
+        border: 1px solid rgba(201, 168, 76, 0.1);
+        border-radius: 20px;
+        padding: 3.5rem;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        position: relative;
+    }
+
+    /* Petit badge décoratif pour l'admin */
+    .brand-card::after {
+        content: "BRAND";
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 0.6rem;
+        color: rgba(201, 168, 76, 0.3);
+        letter-spacing: 0.3em;
+        border: 1px solid rgba(201, 168, 76, 0.2);
+        padding: 2px 8px;
+        border-radius: 4px;
+    }
+
+    .brand-card h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2.2rem;
+        color: #F0EDE6;
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .brand-subtitle {
+        text-align: center;
+        color: #C9A84C;
+        font-size: 0.8rem;
+        margin-bottom: 3rem;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        display: block;
+    }
+
+    /* —— Stylisation du formulaire —— */
+    .brand-card p {
+        margin-bottom: 1.5rem;
+    }
+
+    .brand-card label {
+        display: block;
+        color: #7A7875;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+    }
+
+    .brand-card input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 0.8rem 1rem;
+        color: #F0EDE6;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    .brand-card input:focus {
+        border-color: #C9A84C;
+        background: rgba(201, 168, 76, 0.05);
+    }
+
+    /* —— Bouton Enregistrer (Style Création) —— */
+    .btn-save-brand {
+        width: 100%;
+        background: #2ed573;
+        color: #0E0E10;
+        border: none;
+        padding: 1rem;
+        border-radius: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 1rem;
+    }
+
+    .btn-save-brand:hover {
+        background: #7bed9f;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(46, 213, 115, 0.2);
+    }
+
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 2rem;
+        color: #7A7875;
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+
+    .back-link:hover {
+        color: #C9A84C;
+    }
+</style>
+
+<div class="brand-form-container">
+    <div class="brand-card">
+        <h1>Identité</h1>
+        <span class="brand-subtitle">Ajouter une marque</span>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-fields">
+                {{ form.as_p }}
+            </div>
+
+            <button type="submit" class="btn-save-brand">
+                Enregistrer la marque
+            </button>
+        </form>
+
+        <a href="{% url 'admin_index' %}" class="back-link">
+             Annuler et retourner au panel
+        </a>
+    </div>
+</div>
+
+{% endblock %}

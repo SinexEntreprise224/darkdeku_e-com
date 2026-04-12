@@ -1,0 +1,427 @@
+{% extends "base.html" %}
+{% block title %}Ajouter un produit — DarkDeku{% endblock %}
+{% block content %}
+
+<style>
+    .admin-wrap {
+        padding: 3rem 0 5rem;
+        max-width: 720px;
+    }
+
+    /* ── Header ── */
+    .admin-header {
+        margin-bottom: 2.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+
+    .admin-header .eyebrow {
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: #C9A84C;
+        margin-bottom: 0.45rem;
+    }
+
+    .admin-header h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(1.8rem, 4vw, 2.6rem);
+        font-weight: 700;
+        color: #F0EDE6;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .admin-header p {
+        font-size: 0.84rem;
+        color: #7A7875;
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+    }
+
+    /* ── Form card ── */
+    .form-card {
+        background: #16161A;
+        border: 1px solid rgba(201,168,76,0.18);
+        border-radius: 20px;
+        padding: 2.25rem;
+        animation: fadeUp 0.4s ease both;
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(18px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Field groups ── */
+    .field-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+    }
+
+    @media (max-width: 560px) {
+        .field-row { grid-template-columns: 1fr; }
+    }
+
+    .field-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1.25rem;
+    }
+
+    .field-group label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #7A7875;
+        margin-bottom: 0.45rem;
+    }
+
+    .field-group input[type="text"],
+    .field-group input[type="number"],
+    .field-group input[type="email"],
+    .field-group input[type="url"],
+    .field-group textarea,
+    .field-group select {
+        background: #0E0E10;
+        border: 1px solid rgba(201,168,76,0.2);
+        border-radius: 10px;
+        padding: 0.72rem 1rem;
+        color: #F0EDE6;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        width: 100%;
+    }
+
+    .field-group textarea {
+        resize: vertical;
+        min-height: 110px;
+        line-height: 1.6;
+    }
+
+    .field-group select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237A7875' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 2.5rem;
+        cursor: pointer;
+    }
+
+    .field-group input:focus,
+    .field-group textarea:focus,
+    .field-group select:focus {
+        border-color: #C9A84C;
+        box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+    }
+
+    .field-group input::placeholder,
+    .field-group textarea::placeholder {
+        color: #3A3A3F;
+    }
+
+    /* Checkbox */
+    .field-group-check {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 1.25rem;
+        cursor: pointer;
+    }
+
+    .field-group-check input[type="checkbox"] {
+        width: 17px;
+        height: 17px;
+        accent-color: #C9A84C;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .field-group-check span {
+        font-size: 0.84rem;
+        font-weight: 600;
+        color: #B0ADA8;
+    }
+
+    /* File / image upload */
+    .field-group input[type="file"] {
+        background: #0E0E10;
+        border: 1px dashed rgba(201,168,76,0.3);
+        border-radius: 10px;
+        padding: 0.9rem 1rem;
+        color: #7A7875;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 0.84rem;
+        cursor: pointer;
+        width: 100%;
+        transition: border-color 0.2s;
+    }
+
+    .field-group input[type="file"]:hover {
+        border-color: rgba(201,168,76,0.55);
+    }
+
+    .field-group input[type="file"]::-webkit-file-upload-button {
+        background: rgba(201,168,76,0.12);
+        border: 1px solid rgba(201,168,76,0.3);
+        border-radius: 6px;
+        color: #C9A84C;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 0.3rem 0.8rem;
+        margin-right: 0.75rem;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .field-group input[type="file"]::-webkit-file-upload-button:hover {
+        background: rgba(201,168,76,0.22);
+    }
+
+    /* Help text */
+    .field-hint {
+        font-size: 0.73rem;
+        color: #4A4845;
+        margin-top: 0.4rem;
+        line-height: 1.5;
+    }
+
+    /* Errors */
+    .field-error {
+        font-size: 0.76rem;
+        color: #c0564a;
+        margin-top: 0.35rem;
+    }
+
+    /* Section divider */
+    .form-section {
+        margin-bottom: 0.25rem;
+    }
+
+    .form-section-title {
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #C9A84C;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 1px solid rgba(201,168,76,0.12);
+    }
+
+    .form-divider {
+        height: 1px;
+        background: rgba(201,168,76,0.1);
+        margin: 1.75rem 0;
+    }
+
+    /* ── Actions ── */
+    .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-submit {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 2rem;
+        background: #C9A84C;
+        border: none;
+        border-radius: 10px;
+        color: #0E0E10;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 0.88rem;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-submit:hover  { background: #E8C97A; }
+    .btn-submit:active { transform: scale(0.98); }
+
+    .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.7rem 1.25rem;
+        background: transparent;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 10px;
+        color: #7A7875;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 0.84rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-cancel:hover {
+        border-color: rgba(255,255,255,0.22);
+        color: #F0EDE6;
+    }
+
+    /* Back link */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-top: 2rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #5A5855;
+        text-decoration: none;
+        transition: color 0.2s;
+        letter-spacing: 0.04em;
+    }
+
+    .back-link:hover { color: #C9A84C; }
+</style>
+
+<div class="admin-wrap">
+
+    <div class="admin-header">
+        <p class="eyebrow">Gestion du stock</p>
+        <h1>Ajouter un produit</h1>
+        <p>Renseignez les informations du nouveau produit ci-dessous.</p>
+    </div>
+
+    <div class="form-card">
+        <form method="POST" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <!-- Infos générales -->
+            <div class="form-section">
+                <p class="form-section-title">Informations générales</p>
+
+                <div class="field-group">
+                    <label for="{{ form.name.id_for_label }}">
+                        Nom du produit <span style="color:#c0564a;">*</span>
+                    </label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <span class="field-error">{{ form.name.errors|join:", " }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="field-group">
+                    <label for="{{ form.description.id_for_label }}">Description</label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <span class="field-error">{{ form.description.errors|join:", " }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-divider"></div>
+
+            <!-- Prix & stock -->
+            <div class="form-section">
+                <p class="form-section-title">Prix & stock</p>
+
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="{{ form.price.id_for_label }}">
+                            Prix (FG) <span style="color:#c0564a;">*</span>
+                        </label>
+                        {{ form.price }}
+                        {% if form.price.errors %}
+                            <span class="field-error">{{ form.price.errors|join:", " }}</span>
+                        {% endif %}
+                    </div>
+
+                    {% if form.stock %}
+                    <div class="field-group">
+                        <label for="{{ form.stock.id_for_label }}">Stock disponible</label>
+                        {{ form.stock }}
+                        {% if form.stock.errors %}
+                            <span class="field-error">{{ form.stock.errors|join:", " }}</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-divider"></div>
+
+            <!-- Média & catégorie -->
+            <div class="form-section">
+                <p class="form-section-title">Média & classification</p>
+
+                <div class="field-group">
+                    <label for="{{ form.image.id_for_label }}">Image du produit</label>
+                    {{ form.image }}
+                    <span class="field-hint">Formats acceptés : JPG, PNG, WEBP — max. 5 Mo</span>
+                    {% if form.image.errors %}
+                        <span class="field-error">{{ form.image.errors|join:", " }}</span>
+                    {% endif %}
+                </div>
+
+                {% if form.category %}
+                <div class="field-group">
+                    <label for="{{ form.category.id_for_label }}">Catégorie</label>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                        <span class="field-error">{{ form.category.errors|join:", " }}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                {% if form.partner %}
+                <div class="field-group">
+                    <label for="{{ form.partner.id_for_label }}">Partenaire</label>
+                    {{ form.partner }}
+                    {% if form.partner.errors %}
+                        <span class="field-error">{{ form.partner.errors|join:", " }}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Champs supplémentaires non couverts explicitement -->
+            {% for field in form %}
+                {% if field.name not in "name,description,price,stock,image,category,partner" %}
+                    <div class="field-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <span class="field-hint">{{ field.help_text }}</span>
+                        {% endif %}
+                        {% if field.errors %}
+                            <span class="field-error">{{ field.errors|join:", " }}</span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div class="form-actions">
+                <a href="{% url 'admin_index' %}" class="btn-cancel">
+                    <i class="bi bi-x"></i> Annuler
+                </a>
+                <button type="submit" class="btn-submit">
+                    <i class="bi bi-plus-circle"></i> Ajouter le produit
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <a href="{% url 'admin_index' %}" class="back-link">
+        <i class="bi bi-arrow-left"></i> Retour à l'administration
+    </a>
+
+</div>
+
+{% endblock %}

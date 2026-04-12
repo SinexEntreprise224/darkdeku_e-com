@@ -1,0 +1,668 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} — DarkDeku{% endblock %}
+{% block content %}
+
+<style>
+    .detail-wrap {
+        padding: 3rem 0 5rem;
+        max-width: 1100px;
+    }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 2.5rem;
+        font-size: 0.78rem;
+        color: #5A5855;
+    }
+
+    .breadcrumb-row a {
+        color: #5A5855;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .breadcrumb-row a:hover { color: #C9A84C; }
+
+    .breadcrumb-row i { font-size: 0.6rem; }
+
+    .breadcrumb-row .current { color: #9A9794; }
+
+    /* ── Layout ── */
+    .product-layout {
+        display: grid;
+        grid-template-columns: 1fr 1.15fr;
+        gap: 0;
+        background: #16161A;
+        border: 1px solid rgba(201,168,76,0.18);
+        border-radius: 24px;
+        overflow: hidden;
+        animation: fadeUp 0.45s ease both;
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(18px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Gallery panel ── */
+    .product-gallery {
+        position: relative;
+        background: #111114;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 480px;
+        overflow: hidden;
+        border-right: 1px solid rgba(201,168,76,0.1);
+    }
+
+    .product-gallery img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.6s cubic-bezier(.22,.68,0,1.2);
+    }
+
+    .product-gallery:hover img { transform: scale(1.04); }
+
+    .gallery-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        color: #252528;
+    }
+
+    .gallery-placeholder i { font-size: 4rem; }
+    .gallery-placeholder span { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    /* Category chip on image */
+    .gallery-chip {
+        position: absolute;
+        top: 1.25rem;
+        left: 1.25rem;
+        padding: 0.3rem 0.85rem;
+        background: rgba(14,14,16,0.8);
+        border: 1px solid rgba(201,168,76,0.3);
+        border-radius: 7px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #C9A84C;
+        backdrop-filter: blur(8px);
+        z-index: 2;
+    }
+
+    /* Stock indicator */
+    .gallery-stock {
+        position: absolute;
+        bottom: 1.25rem;
+        left: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.9rem;
+        border-radius: 7px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        backdrop-filter: blur(8px);
+        z-index: 2;
+    }
+
+    .gallery-stock.in  { background: rgba(15,110,86,0.8);  color: #7FFFD4; border: 1px solid rgba(127,255,212,0.2); }
+    .gallery-stock.low { background: rgba(133,79,11,0.8);  color: #FAC775; border: 1px solid rgba(250,199,117,0.2); }
+    .gallery-stock.out { background: rgba(90,20,20,0.8);   color: #F09595; border: 1px solid rgba(240,149,149,0.2); }
+
+    .stock-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .in  .stock-dot { background: #7FFFD4; }
+    .low .stock-dot { background: #FAC775; }
+    .out .stock-dot { background: #F09595; }
+
+    /* ── Info panel ── */
+    .product-info {
+        padding: 2.75rem 2.5rem;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    /* Top: name + price */
+    .info-top { margin-bottom: 1.75rem; }
+
+    .info-top .category-label {
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #C9A84C;
+        margin-bottom: 0.5rem;
+        text-decoration: none;
+        display: inline-block;
+        transition: color 0.2s;
+    }
+
+    .info-top .category-label:hover { color: #E8C97A; }
+
+    .info-top h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+        font-weight: 700;
+        color: #F0EDE6;
+        line-height: 1.1;
+        margin: 0 0 1rem;
+    }
+
+    .price-row {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+    }
+
+    .price-main {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #C9A84C;
+        font-family: 'Cormorant Garamond', serif;
+        line-height: 1;
+    }
+
+    .price-currency {
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #7A7875;
+    }
+
+    /* ── Divider ── */
+    .info-divider {
+        height: 1px;
+        background: rgba(201,168,76,0.1);
+        margin: 1.75rem 0;
+    }
+
+    /* ── Description ── */
+    .desc-block { margin-bottom: 1.75rem; }
+
+    .desc-header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 1rem;
+    }
+
+    .desc-header .desc-label {
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #7A7875;
+    }
+
+    .desc-header::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(201,168,76,0.1);
+    }
+
+    .desc-content {
+        font-size: 0.92rem;
+        color: #9A9794;
+        line-height: 1.85;
+        border-left: 2px solid rgba(201,168,76,0.3);
+        padding-left: 1.2rem;
+    }
+
+    .desc-content p { margin: 0 0 0.75rem; }
+    .desc-content p:last-child { margin-bottom: 0; }
+
+    /* Read more toggle */
+    .desc-collapsed {
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        transition: all 0.3s;
+    }
+
+    .desc-collapsed.expanded { -webkit-line-clamp: unset; overflow: visible; }
+
+    .btn-read-more {
+        background: transparent;
+        border: none;
+        color: #C9A84C;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        cursor: pointer;
+        padding: 0.5rem 0 0;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: color 0.2s;
+    }
+
+    .btn-read-more:hover { color: #E8C97A; }
+
+    /* ── Specs ── */
+    .specs-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .spec-card {
+        background: #0E0E10;
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+    }
+
+    .spec-card .spec-label {
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: #5A5855;
+        margin-bottom: 0.3rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .spec-card .spec-label i { font-size: 0.7rem; }
+
+    .spec-card .spec-value {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #F0EDE6;
+    }
+
+    .spec-card .spec-value a {
+        color: #C9A84C;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .spec-card .spec-value a:hover { color: #E8C97A; }
+
+    /* ── CTA ── */
+    .cta-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-add-cart {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        padding: 1rem 1.5rem;
+        background: #C9A84C;
+        border: none;
+        border-radius: 12px;
+        color: #0E0E10;
+        font-family: 'Nunito Sans', sans-serif;
+        font-size: 0.88rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-add-cart:hover  { background: #E8C97A; color: #0E0E10; }
+    .btn-add-cart:active { transform: scale(0.98); }
+
+    .btn-add-cart.disabled {
+        background: #2E2E34;
+        color: #5A5855;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    /* ── Tags ── */
+    .tags-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .tag-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.3rem 0.85rem;
+        background: rgba(201,168,76,0.07);
+        border: 1px solid rgba(201,168,76,0.2);
+        border-radius: 50px;
+        font-size: 0.73rem;
+        font-weight: 600;
+        color: #7A7875;
+        text-decoration: none;
+        transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .tag-pill:hover {
+        border-color: rgba(201,168,76,0.5);
+        color: #C9A84C;
+        background: rgba(201,168,76,0.12);
+    }
+
+    /* ── Admin tools ── */
+    .admin-tools {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 12px;
+        margin-bottom: 1.25rem;
+    }
+
+    .admin-tools .admin-label {
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: #3A3A3F;
+        margin-right: auto;
+    }
+
+    .btn-edit {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.4rem 0.9rem;
+        border: 1px solid rgba(201,168,76,0.3);
+        border-radius: 7px;
+        color: #C9A84C;
+        font-size: 0.77rem;
+        font-weight: 600;
+        text-decoration: none;
+        letter-spacing: 0.05em;
+        transition: background 0.2s, border-color 0.2s;
+    }
+
+    .btn-edit:hover {
+        background: rgba(201,168,76,0.1);
+        border-color: rgba(201,168,76,0.55);
+        color: #E8C97A;
+    }
+
+    .btn-del {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.4rem 0.9rem;
+        border: 1px solid rgba(192,86,74,0.3);
+        border-radius: 7px;
+        color: #c0564a;
+        font-size: 0.77rem;
+        font-weight: 600;
+        text-decoration: none;
+        letter-spacing: 0.05em;
+        transition: background 0.2s, border-color 0.2s;
+    }
+
+    .btn-del:hover {
+        background: rgba(192,86,74,0.1);
+        border-color: rgba(192,86,74,0.55);
+        color: #e07068;
+    }
+
+    /* Back */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #5A5855;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .back-link:hover { color: #C9A84C; }
+
+    /* ── 404 state ── */
+    .not-found {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 6rem 2rem;
+        text-align: center;
+        border: 1px dashed rgba(201,168,76,0.2);
+        border-radius: 20px;
+    }
+
+    .not-found i { font-size: 3rem; color: #C9A84C; margin-bottom: 1rem; }
+
+    .not-found p {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.5rem;
+        color: #F0EDE6;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 860px) {
+        .product-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .product-gallery {
+            min-height: 300px;
+            border-right: none;
+            border-bottom: 1px solid rgba(201,168,76,0.1);
+        }
+
+        .product-info { padding: 2rem 1.5rem; }
+
+        .specs-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="detail-wrap">
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-row">
+        <a href="{% url 'index' %}">Catalogue</a>
+        {% if product.category %}
+            <i class="bi bi-chevron-right"></i>
+            <a href="{% url 'product_by_category' product.category.id %}">{{ product.category.name }}</a>
+        {% endif %}
+        <i class="bi bi-chevron-right"></i>
+        <span class="current">{{ product.name }}</span>
+    </div>
+
+    {% if not product %}
+
+        <div class="not-found">
+            <i class="bi bi-exclamation-triangle"></i>
+            <p>Produit introuvable.</p>
+        </div>
+
+    {% else %}
+
+        <div class="product-layout">
+
+            <!-- ── Gallery ── -->
+            <div class="product-gallery">
+                {% if product.category %}
+                    <span class="gallery-chip">{{ product.category.name }}</span>
+                {% endif %}
+
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% else %}
+                    <div class="gallery-placeholder">
+                        <i class="bi bi-image"></i>
+                        <span>Aucune image</span>
+                    </div>
+                {% endif %}
+
+                {% if product.quantity == 0 %}
+                    <span class="gallery-stock out"><span class="stock-dot"></span>Rupture de stock</span>
+                {% elif product.quantity <= 5 %}
+                    <span class="gallery-stock low"><span class="stock-dot"></span>Stock limité — {{ product.quantity }} restant{% if product.quantity > 1 %}s{% endif %}</span>
+                {% else %}
+                    <span class="gallery-stock in"><span class="stock-dot"></span>En stock</span>
+                {% endif %}
+            </div>
+
+            <!-- ── Info ── -->
+            <div class="product-info">
+
+                <div class="info-top">
+                    {% if product.category %}
+                        <a href="{% url 'product_by_category' product.category.id %}" class="category-label">
+                            {{ product.category.name }}
+                        </a>
+                    {% endif %}
+                    <h1>{{ product.name }}</h1>
+                    <div class="price-row">
+                        <span class="price-main">{{ product.price }}</span>
+                        <span class="price-currency">GNf</span>
+                    </div>
+                </div>
+
+                <div class="info-divider"></div>
+
+                <!-- Description -->
+                {% if product.description %}
+                <div class="desc-block">
+                    <div class="desc-header">
+                        <span class="desc-label"><i class="bi bi-text-left" style="font-size:0.75rem;"></i> Description</span>
+                    </div>
+                    <div class="desc-content">
+                        <div class="desc-collapsed" id="descText">
+                            {{ product.description|linebreaks }}
+                        </div>
+                    </div>
+                    <button class="btn-read-more" id="readMoreBtn" onclick="toggleDesc()">
+                        <i class="bi bi-chevron-down" id="readMoreIcon"></i>
+                        <span id="readMoreLabel">Lire plus</span>
+                    </button>
+                </div>
+
+                <div class="info-divider"></div>
+                {% endif %}
+
+                <!-- Specs -->
+                <div class="specs-grid">
+                    <div class="spec-card">
+                        <div class="spec-label"><i class="bi bi-box-seam"></i> Stock</div>
+                        <div class="spec-value">{{ product.quantity }} unité{% if product.quantity > 1 %}s{% endif %}</div>
+                    </div>
+
+                    {% if product.make %}
+                    <div class="spec-card">
+                        <div class="spec-label"><i class="bi bi-award"></i> Marque</div>
+                        <div class="spec-value">
+                            <a href="{% url 'product_by_make' product.make.id %}">{{ product.make.name }}</a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if product.category %}
+                    <div class="spec-card">
+                        <div class="spec-label"><i class="bi bi-grid"></i> Catégorie</div>
+                        <div class="spec-value">
+                            <a href="{% url 'product_by_category' product.category.id %}">{{ product.category.name }}</a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="spec-card">
+                        <div class="spec-label"><i class="bi bi-shield-check"></i> Garantie</div>
+                        <div class="spec-value" style="color:#7A7875;">Mobile Money</div>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="cta-group">
+                    {% if product.quantity > 0 %}
+                        <a href="{% url 'add_to_cart' product.slug %}" class="btn-add-cart">
+                            <i class="bi bi-bag-plus"></i> Ajouter au panier
+                        </a>
+                    {% else %}
+                        <span class="btn-add-cart disabled">
+                            <i class="bi bi-x-circle"></i> Indisponible
+                        </span>
+                    {% endif %}
+                </div>
+
+                <!-- Tags -->
+                {% if product.tags.all %}
+                <div class="tags-row">
+                    {% for tag in product.tags.all %}
+                        <a href="{% url 'product_by_tag' tag.id %}" class="tag-pill">
+                            <i class="bi bi-hash" style="font-size:0.7rem;"></i>{{ tag.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Admin tools -->
+                {% if user.role == 'admin' %}
+                <div class="admin-tools">
+                    <span class="admin-label">Admin</span>
+                    <a href="{% url 'edit_product' product.slug %}" class="btn-edit">
+                        <i class="bi bi-pencil"></i> Modifier
+                    </a>
+                    <a href="{% url 'delete_product' product.slug %}" class="btn-del">
+                        <i class="bi bi-trash3"></i> Supprimer
+                    </a>
+                </div>
+                {% endif %}
+
+                <a href="{% url 'index' %}" class="back-link">
+                    <i class="bi bi-arrow-left"></i> Retour au catalogue
+                </a>
+
+            </div>
+        </div>
+
+    {% endif %}
+</div>
+
+<script>
+    function toggleDesc() {
+        const text  = document.getElementById('descText');
+        const icon  = document.getElementById('readMoreIcon');
+        const label = document.getElementById('readMoreLabel');
+        const open  = text.classList.toggle('expanded');
+        icon.className  = open ? 'bi bi-chevron-up' : 'bi bi-chevron-down';
+        label.textContent = open ? 'Réduire' : 'Lire plus';
+    }
+
+    // Masquer le bouton "lire plus" si le texte est court
+    window.addEventListener('DOMContentLoaded', () => {
+        const el  = document.getElementById('descText');
+        const btn = document.getElementById('readMoreBtn');
+        if (el && btn && el.scrollHeight <= el.clientHeight + 4) {
+            btn.style.display = 'none';
+        }
+    });
+</script>
+
+{% endblock %}

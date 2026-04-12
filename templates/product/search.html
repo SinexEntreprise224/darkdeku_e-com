@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block title %}Résultats pour {{ query }} — DarkDeku{% endblock %}
+{% block content %}
+
+<style>
+    .search-wrap {
+        padding: 3rem 0 5rem;
+    }
+
+    /* —— En-tête de recherche —— */
+    .search-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+
+    .search-header h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(2rem, 5vw, 3rem);
+        color: #F0EDE6;
+        margin-bottom: 1rem;
+    }
+
+    .search-header span {
+        color: #C9A84C;
+        font-weight: 700;
+    }
+
+    .result-meta {
+        font-size: 0.9rem;
+        color: #7A7875;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    /* —— Grille de produits —— */
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2.5rem;
+    }
+
+    /* —— Carte Produit (Style Media7plus) —— */
+    .product-card {
+        background: #16161A;
+        border: 1px solid rgba(201, 168, 76, 0.1);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.4s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-card:hover {
+        transform: translateY(-10px);
+        border-color: rgba(201, 168, 76, 0.4);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    .card-img-wrap {
+        height: 250px;
+        position: relative;
+        background: #1C1C20;
+    }
+
+    .card-img-wrap img {
+        width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .price-chip {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(14, 14, 16, 0.8);
+        color: #C9A84C;
+        padding: 0.4rem 0.8rem;
+        border-radius: 10px;
+        font-weight: 800;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(201, 168, 76, 0.2);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .card-name {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.4rem;
+        color: #F0EDE6;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-desc {
+        font-size: 0.85rem;
+        color: #7A7875;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+    }
+
+    .btn-action {
+        display: block;
+        padding: 0.8rem;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        transition: 0.3s;
+    }
+
+    .btn-cart {
+        background: #C9A84C;
+        color: #0E0E10;
+        border: 1px solid #C9A84C;
+    }
+
+    .btn-cart:hover {
+        background: #E8C97A;
+    }
+
+    /* —— État vide —— */
+    .no-results {
+        text-align: center;
+        padding: 5rem 0;
+    }
+
+    .no-results i {
+        font-size: 4rem;
+        color: #C9A84C;
+        opacity: 0.3;
+        margin-bottom: 1.5rem;
+    }
+</style>
+
+<div class="container search-wrap">
+    
+    <header class="search-header">
+        <p class="result-meta">
+            {% if query %}
+                Résultats pour la recherche
+            {% else %}
+                Tous les produits dans
+            {% endif %}
+        </p>
+        <h1>
+            {% if query %}
+                "<span>{{ query }}</span>" 
+            {% endif %}
+            en <span>{{ category.name }}</span>
+        </h1>
+        <p class="result-meta"><strong>{{ products|length }}</strong> article{% if products|length > 1 %}s{% endif %} trouvé{% if products|length > 1 %}s{% endif %}</p>
+    </header>
+
+    {% if products %}
+        <div class="products-grid">
+            {% for product in products %}
+                <article class="product-card">
+                    <div class="card-img-wrap">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% endif %}
+                        <span class="price-chip">{{ product.price }} FG</span>
+                    </div>
+                    <div class="card-body">
+                        <h2 class="card-name">{{ product.name }}</h2>
+                        <p class="card-desc">{{ product.description|truncatewords:10 }}</p>
+                        <a href="{% url 'add_to_cart' product.slug %}" class="btn-action btn-cart">
+                            Ajouter au panier
+                        </a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-results">
+            <i class="bi bi-search"></i>
+            <h3>Zéro résultat</h3>
+            <p style="color: #7A7875;">Désolé, nous n'avons rien trouvé pour cette recherche dans <strong>{{ category.name }}</strong>.</p>
+            <a href="{% url 'index' %}" style="color: #C9A84C; text-decoration: none; font-weight: 700; margin-top: 2rem; display: inline-block;">
+                <i class="bi bi-arrow-left"></i> Retour à l'accueil
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

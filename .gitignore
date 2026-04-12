@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+venv/
+db.sqlite3
+.env
+public/static
+secret
+secret.pub

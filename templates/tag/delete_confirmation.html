@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Supprimer le tag : {{ tag.name }} — DarkDeku{% endblock %}
+
+{% block content %}
+
+<style>
+    .delete-confirm-wrap {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 6rem 1rem;
+    }
+
+    .delete-card {
+        background: #16161A;
+        border: 1px solid rgba(255, 71, 87, 0.2);
+        border-radius: 24px;
+        padding: 3.5rem;
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .delete-icon {
+        font-size: 3rem;
+        color: #ff4757;
+        margin-bottom: 1.5rem;
+        display: block;
+    }
+
+    .delete-card h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2.2rem;
+        color: #F0EDE6;
+        margin-bottom: 1rem;
+    }
+
+    .tag-name-display {
+        color: #C9A84C;
+        font-style: italic;
+    }
+
+    .delete-card p {
+        color: #7A7875;
+        font-size: 0.95rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .delete-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .btn-confirm {
+        background: #ff4757;
+        color: white;
+        border: none;
+        padding: 1.1rem;
+        border-radius: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-confirm:hover {
+        background: #ff6b81;
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+        background: rgba(255, 255, 255, 0.05);
+        color: #F0EDE6;
+        padding: 1.1rem;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: 0.3s;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: block;
+    }
+
+    .btn-cancel:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #C9A84C;
+    }
+</style>
+
+<div class="delete-confirm-wrap">
+    <div class="delete-card">
+        <i class="bi bi-trash3-fill delete-icon"></i>
+        
+        <h1>Supprimer le tag <span class="tag-name-display">#{{ tag.name }}</span> ?</h1>
+        
+        <p>Es-tu sûr de vouloir retirer ce tag ? Les produits associés ne seront pas supprimés, mais ils ne porteront plus cette étiquette.</p>
+
+        <div class="delete-actions">
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn-confirm w-100">
+                    Oui, supprimer
+                </button>
+            </form>
+            
+            <a href="{% url 'admin_index' %}" class="btn-cancel">
+                Non, annuler
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

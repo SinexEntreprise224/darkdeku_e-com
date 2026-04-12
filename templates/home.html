@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+{% block title %}Boutique — DarkDeku{% endblock %}
+{% block content %}
+
+<style>
+    .shop-wrap {
+        padding: 3rem 0 5rem;
+    }
+
+    /* —— Header (Inspiré Media7plus) —— */
+    .shop-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-bottom: 4rem;
+        gap: 2.5rem;
+    }
+
+    .shop-title-block .eyebrow {
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: #C9A84C;
+        margin-bottom: 0.8rem;
+    }
+
+    .shop-title-block h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(2.5rem, 6vw, 3.8rem);
+        font-weight: 700;
+        color: #F0EDE6;
+        margin: 0;
+    }
+
+    /* —— Search Bar Style "Media7Plus" avec Sélecteur —— */
+    .search-container {
+        width: 100%;
+        max-width: 750px;
+        margin: 0 auto;
+    }
+
+    .search-form {
+        display: flex;
+        align-items: center;
+        background: #1C1C20;
+        border: 1px solid rgba(201, 168, 76, 0.2);
+        border-radius: 50px; /* Style pilule */
+        padding: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .search-form:focus-within {
+        border-color: #C9A84C;
+        box-shadow: 0 0 20px rgba(201, 168, 76, 0.1);
+    }
+
+    /* Sélecteur de catégorie intégré */
+    .category-select {
+        background: transparent;
+        border: none;
+        border-right: 1px solid rgba(201, 168, 76, 0.2);
+        color: #C9A84C;
+        padding: 0 1.5rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        outline: none;
+        cursor: pointer;
+        height: 35px;
+        max-width: 160px;
+        appearance: none; /* Retire le style par défaut */
+    }
+
+    .category-select option {
+        background: #16161A;
+        color: #F0EDE6;
+    }
+
+    .search-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        color: #F0EDE6;
+        font-size: 1rem;
+        outline: none;
+    }
+
+    .search-submit {
+        background: #C9A84C;
+        color: #0E0E10;
+        border: none;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .search-submit:hover {
+        background: #E8C97A;
+        transform: scale(1.05);
+    }
+
+    .articles-count {
+        font-size: 0.85rem;
+        color: #7A7875;
+        letter-spacing: 0.05em;
+    }
+
+    .articles-count strong { color: #C9A84C; }
+
+    /* —— Grid & Cards —— */
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2.5rem;
+    }
+
+    .product-card {
+        background: #16161A;
+        border: 1px solid rgba(201, 168, 76, 0.1);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        opacity: 0;
+        animation: fadeUp 0.6s ease forwards;
+    }
+
+    .product-card:hover {
+        transform: translateY(-10px);
+        border-color: rgba(201, 168, 76, 0.4);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+    }
+
+    .product-card:nth-child(n) { animation-delay: calc(0.08s * var(--i, 1)); }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-img-wrap {
+        height: 250px;
+        background: #1C1C20;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-img-wrap img {
+        width: 100%; height: 100%; object-fit: cover;
+        transition: transform 0.8s ease;
+    }
+
+    .product-card:hover .card-img-wrap img { transform: scale(1.1); }
+
+    .price-chip {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(14, 14, 16, 0.85);
+        backdrop-filter: blur(8px);
+        color: #C9A84C;
+        padding: 0.5rem 1rem;
+        border-radius: 30px;
+        font-weight: 800;
+        font-size: 0.85rem;
+        border: 1px solid rgba(201, 168, 76, 0.2);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .card-name {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.3rem;
+        color: #F0EDE6;
+        margin-bottom: 0.6rem;
+    }
+
+    .card-desc {
+        font-size: 0.85rem;
+        color: #7A7875;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .btn-cart {
+        background: transparent;
+        border: 1px solid #C9A84C;
+        color: #C9A84C;
+        padding: 0.8rem;
+        border-radius: 30px;
+        text-decoration: none;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        display: block;
+        transition: all 0.3s;
+    }
+
+    .btn-cart:hover {
+        background: #C9A84C;
+        color: #0E0E10;
+    }
+</style>
+
+<div class="shop-wrap">
+
+    <div class="shop-header">
+        <div class="shop-title-block">
+            <p class="eyebrow">Exclusivité & Qualité</p>
+            <h1>La Boutique</h1>
+
+        </div>
+        <div class="search-container">
+            <form id="searchForm" method="GET" class="search-form">
+                <select id="catSelect" class="category-select" required>
+                    <option value="" disabled selected>Catégorie</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.name }}" {% if selected_category == cat.name %}selected{% endif %}>
+                            {{ cat.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <input type="text" name="q" class="search-input" placeholder="Que recherchez-vous ?" value="{{ query|default:'' }}">
+
+                <button type="submit" class="search-submit">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </div>
+
+        <script>
+            document.getElementById('searchForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const category = document.getElementById('catSelect').value;
+                const query = this.querySelector('input[name="q"]').value;
+
+                if (category) {
+                    // Encode la catégorie et ajoute bien le slash final avant le ?q=
+                    let newUrl = `/search/${encodeURIComponent(category.toLowerCase())}/`;
+
+                    if (query) {
+                        newUrl += `?q=${encodeURIComponent(query)}`;
+                    }
+                    window.location.href = newUrl;
+                }
+            });
+        </script>
+        {% if products %}
+            <span class="articles-count">
+                <strong>{{ products|length }}</strong> article{% if products|length > 1 %}s{% endif %} trouvé{% if products|length > 1 %}s{% endif %}
+            </span>
+        {% endif %}
+    </div>
+
+    {% if not products %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="bi bi-search"></i>
+            </div>
+            <h3>Aucun résultat</h3>
+            <p>Nous n'avons trouvé aucun produit pour "<strong>{{ query }}</strong>" dans cette catégorie.</p>
+            <a href="{% url 'shop' %}" style="color: #C9A84C; margin-top: 1.5rem; text-decoration: none; font-weight: 700;">
+                <i class="bi bi-arrow-left"></i> Retour à la boutique
+            </a>
+        </div>
+    {% else %}
+        <div class="products-grid">
+            {% for product in products %}
+                <div class="product-card" style="--i: {{ forloop.counter }}">
+                    <div class="card-img-wrap">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <div style="display:flex; height:100%; align-items:center; justify-content:center; background:#1C1C20; color:#333;">
+                                <i class="bi bi-image" style="font-size: 3rem;"></i>
+                            </div>
+                        {% endif %}
+                        <span class="price-chip">{{ product.price }} FG</span>
+                    </div>
+
+                    <div class="card-body">
+                        <h2 class="card-name">{{ product.name }}</h2>
+                        <p class="card-desc">{{ product.description|truncatewords:8 }}</p>
+
+                        <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                            <a href="{% url 'detail' product.slug %}" style="color: #7A7875; text-decoration: none; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
+                                Voir les détails
+                            </a>
+                            <a href="{% url 'add_to_cart' product.slug %}" class="btn-cart">
+                                Ajouter au panier
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

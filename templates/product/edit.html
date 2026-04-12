@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier {{ product.name }} — DarkDeku{% endblock %}
+
+{% block content %}
+
+<style>
+    .edit-container {
+        max-width: 800px;
+        margin: 4rem auto;
+        padding: 0 1.5rem;
+    }
+
+    .edit-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 3rem;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    }
+
+    .edit-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .edit-header h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2.5rem;
+        color: var(--text-main);
+        margin-bottom: 0.5rem;
+    }
+
+    .edit-header p {
+        color: var(--gold);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    /* —— Stylisation du Formulaire —— */
+    .product-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    /* Cible les paragraphes générés par form.as_p */
+    .product-form p {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .product-form label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* Cible les inputs, textareas et selects */
+    .product-form input:not([type="submit"]), 
+    .product-form textarea, 
+    .product-form select {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1rem;
+        color: var(--text-main);
+        font-family: inherit;
+        font-size: 1rem;
+        transition: 0.3s;
+        width: 100%;
+    }
+
+    .product-form input:focus, 
+    .product-form textarea:focus, 
+    .product-form select:focus {
+        outline: none;
+        border-color: var(--gold);
+        background: rgba(201, 168, 76, 0.05);
+    }
+
+    .product-form textarea {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    /* —— Bouton de soumission —— */
+    .btn-submit {
+        background: var(--gold);
+        color: var(--dark-bg);
+        border: none;
+        padding: 1.2rem;
+        border-radius: 14px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 1.5rem;
+    }
+
+    .btn-submit:hover {
+        background: var(--gold-light);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(201, 168, 76, 0.2);
+    }
+
+    .cancel-link {
+        display: block;
+        text-align: center;
+        margin-top: 1.5rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: 0.2s;
+    }
+
+    .cancel-link:hover {
+        color: #c0564a;
+    }
+
+    /* Aide pour l'upload de fichier */
+    .product-form input[type="file"] {
+        padding: 0.5rem 0;
+        border: none;
+        background: transparent;
+    }
+</style>
+
+<div class="edit-container">
+    <div class="edit-card">
+        <header class="edit-header">
+            <p>Administration</p>
+            <h1>Modifier le produit</h1>
+        </header>
+
+        <form method="POST" enctype="multipart/form-data" class="product-form">
+            {% csrf_token %}
+            
+            <div class="form-fields">
+                {{ form.as_p }}
+            </div>
+
+            <button type="submit" class="btn-submit">
+                Enregistrer les modifications
+            </button>
+        </form>
+
+        <a href="{% url 'detail' product.slug %}" class="cancel-link">
+            <i class="bi bi-x-circle"></i> Annuler la modification
+        </a>
+    </div>
+</div>
+
+{% endblock %}

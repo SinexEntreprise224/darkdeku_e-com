@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Commander {{ product.name }} — DarkDeku{% endblock %}
+
+{% block content %}
+
+<style>
+    .order-container {
+        padding: 5rem 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .order-card {
+        background: #16161A;
+        border: 1px solid rgba(201, 168, 76, 0.1);
+        border-radius: 30px;
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+        max-width: 900px;
+        width: 100%;
+        box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+    }
+
+    .order-image-side {
+        flex: 1;
+        background: #0E0E10;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2.5rem;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .order-image-side img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+
+    .order-details-side {
+        flex: 1.2;
+        padding: 4rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .order-details-side h1 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2.8rem;
+        color: #F0EDE6;
+        margin-bottom: 0.5rem;
+    }
+
+    .order-price-info {
+        margin-bottom: 2rem;
+    }
+
+    .unit-price {
+        color: #7A7875;
+        font-size: 0.9rem;
+        display: block;
+        margin-bottom: 0.2rem;
+    }
+
+    .total-display {
+        font-size: 2rem;
+        color: #C9A84C;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+    }
+
+    .order-stock {
+        font-size: 0.8rem;
+        color: #7A7875;
+        margin-bottom: 2.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    .stock-number { color: #F0EDE6; }
+
+    .order-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .input-quantity {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1rem;
+        color: #F0EDE6;
+        font-size: 1.2rem;
+        width: 100%;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    .input-quantity:focus {
+        border-color: #C9A84C;
+        background: rgba(201, 168, 76, 0.05);
+    }
+
+    .btn-buy {
+        background: #C9A84C;
+        color: #0E0E10;
+        border: none;
+        padding: 1.2rem;
+        border-radius: 14px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .btn-buy:hover {
+        background: #E8C97A;
+        transform: translateY(-3px);
+    }
+
+    .back-btn {
+        text-align: center;
+        margin-top: 2rem;
+        color: #7A7875;
+        text-decoration: none;
+        font-size: 0.8rem;
+    }
+
+    @media (max-width: 768px) {
+        .order-card { flex-direction: column; }
+        .order-image-side { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+    }
+</style>
+
+<div class="order-container">
+    <div class="order-card">
+        <div class="order-image-side">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+                <img src="https://via.placeholder.com/400" alt="Image indisponible">
+            {% endif %}
+        </div>
+
+        <div class="order-details-side">
+            <h1>{{ product.name }}</h1>
+            
+            <div class="order-price-info">
+                <span class="unit-price">Prix unitaire : {{ product.price }} GNf</span>
+                <span id="total-price" class="total-display">{{ product.price }} GNf</span>
+            </div>
+
+            <p class="order-stock">
+                Stock disponible : <span class="stock-number">{{ product.quantity }}</span>
+            </p>
+
+            <form method="POST" class="order-form">
+                {% csrf_token %}
+                <div class="quantity-group">
+                    <input type="number" 
+                           id="quantity-input"
+                           name="quantity" 
+                           value="1"
+                           min="1" 
+                           max="{{ product.quantity }}" 
+                           class="input-quantity"
+                           required>
+                </div>
+
+                <button type="submit" class="btn-buy">Confirmer l'achat</button>
+            </form>
+
+            <a href="{% url 'index' %}" class="back-btn">
+                <i class="bi bi-arrow-left"></i> Retour à la boutique
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const quantityInput = document.getElementById('quantity-input');
+    const totalDisplay = document.getElementById('total-price');
+    const unitPrice = parseFloat("{{ product.price }}");
+
+    quantityInput.addEventListener('input', function() {
+        let quantity = parseInt(this.value);
+        
+        // Sécurité pour éviter les calculs bizarres
+        if (isNaN(quantity) || quantity < 1) {
+            totalDisplay.innerText = "0 GNf";
+            return;
+        }
+        
+        const total = quantity * unitPrice;
+        // Formatage pour l'esthétique
+        totalDisplay.innerText = total.toLocaleString() + " GNf";
+    });
+</script>
+
+{% endblock %}
