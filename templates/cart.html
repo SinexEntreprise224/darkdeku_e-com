@@ -200,19 +200,48 @@
     .cell-price  { color: #7A7875; font-size: 0.88rem; white-space: nowrap; }
     .cell-total  { color: #C9A84C; font-weight: 700; font-size: 0.95rem; white-space: nowrap; }
 
-    /* Quantity badge */
-    .qty-badge {
-        display: inline-flex;
+    /* Quantity Styling */
+    .qty-container {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .qty-input {
+        width: 55px;
+        padding: 0.35rem;
+        background: rgba(201,168,76,0.08);
+        border: 1px solid rgba(201,168,76,0.2);
+        border-radius: 8px;
+        color: #C9A84C;
+        font-family: 'Nunito Sans', sans-serif;
+        font-weight: 700;
+        text-align: center;
+        outline: none;
+    }
+
+    .qty-input:focus {
+        border-color: #C9A84C;
+        background: rgba(201,168,76,0.12);
+    }
+
+    .btn-update-qty {
+        background: transparent;
+        border: 1px solid rgba(201,168,76,0.3);
+        color: #C9A84C;
+        border-radius: 8px;
+        padding: 0.35rem 0.6rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
         align-items: center;
         justify-content: center;
-        min-width: 36px;
-        padding: 0.3rem 0.7rem;
-        background: rgba(201,168,76,0.1);
-        border: 1px solid rgba(201,168,76,0.25);
-        border-radius: 8px;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #C9A84C;
+    }
+
+    .btn-update-qty:hover {
+        background: #C9A84C;
+        color: #0E0E10;
+        border-color: #C9A84C;
     }
 
     /* Action buttons */
@@ -404,7 +433,7 @@
                 <i class="bi bi-bag-x"></i>
             </div>
             <h3>Panier vide</h3>
-            <p>Vous n'avez pas encore ajouté de produits à votre panier.</p>
+            <p>Tu n'as pas encore ajouté de produits à ton panier.</p>
             <a href="{% url 'index' %}" class="btn-browse">
                 <i class="bi bi-grid-3x3-gap"></i> Parcourir le catalogue
             </a>
@@ -445,7 +474,15 @@
                                 {{ order.product.price }} <small style="color:#5A5855;">FG</small>
                             </td>
                             <td data-label="Quantité">
-                                <span class="qty-badge">{{ order.quantity }}</span>
+                               <form method="POST" action="{% url 'edit_order' order.id %}" class="qty-form">
+                                   {% csrf_token %}
+                                   <div class="qty-container">
+                                       <input type="number" name="quantity" value="{{ order.quantity }}" min="1" class="qty-input">
+                                       <button type="submit" class="btn-update-qty" title="Mettre à jour">
+                                           <i class="bi bi-check2"></i>
+                                       </button>
+                                   </div>
+                               </form>
                             </td>
                             <td class="cell-total" data-label="Total">
                                 {% widthratio order.product.price 1 order.quantity %} <small style="color:#A88C3A;font-weight:400;">FG</small>

@@ -237,6 +237,7 @@
             <form method="POST" novalidate>
                 {% csrf_token %}
                 {{ form|crispy }}
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
                 <button type="submit" class="btn-auth">
                     <i class="bi bi-arrow-right-short" style="font-size:1.1em;vertical-align:-1px;"></i>
                     Se connecter
@@ -244,7 +245,6 @@
             </form>
 
             <div class="auth-divider"></div>
-
             <p class="auth-footer">
                 Pas encore de compte ?
                 <a href="{% url 'register' %}">Inscrivez-vous</a>

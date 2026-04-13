@@ -30,6 +30,9 @@ def login(request):
            if user is not None:
                auth_user(request, user)
                messages.success(request, "Connexion réussie!")
+               next_url = request.POST.get("next")
+               if next_url:
+                  return redirect(next_url)
                return redirect("index")
            else:
                form = LoginForm()
@@ -238,13 +241,13 @@ def add_to_cart(request, slug):
     if created:
         cart_.orders.add(order_)
         messages.success(request, "Le produit a été ajouté au panier.")
-        return redirect("index")
+        return redirect("cart")
     else:
         order_.quantity += 1
         order_.save()
         messages.info(request, "La quantité a été mise à jour.")
 
-        return redirect("index")
+        return redirect("cart")
 
 @login_required
 def cart(request):
@@ -261,7 +264,7 @@ def leave_to_cart(request, slug):
     product = get_object_or_404(Product, slug=slug)
     if  not product.is_active:
         messages.error(request, "ce produit n'existe pas")
-        return redirect("index")
+        return redirect("cart")
     cart_= get_object_or_404(Cart, user=user)
 
     order_ = Order.objects.filter(
