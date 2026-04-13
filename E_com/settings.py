@@ -71,28 +71,18 @@ WSGI_APPLICATION = 'E_com.wsgi.application'
 
 # --- BASE DE DONNÉES ---
 # Railway fournit une DATABASE_URL. Si elle n'existe pas, on utilise tes variables individuelles.
-db_config = dj_database_url.config(
-    default=os.environ.get('DATABASE_URL'),
-    conn_max_age=600,
-    ssl_require=not DEBUG # SSL activé seulement quand DEBUG=False (en prod)
-)
 
-if db_config:
-    DATABASES = {'default': db_config}
-else:
-    # Backup pour le développement classique si aucune URL n'est fournie
-    DATABASES = {
-        
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('DB_NAME'),
-            'USER': os.getenv('DB_USER'),
-            'PASSWORD': os.getenv('DB_PASSWORD'),
-            'HOST': os.getenv('DB_HOST', 'localhost'),
-            'PORT': os.getenv('DB_PORT', '5432'),
-        }
+# Backup pour le développement classique si aucune URL n'est fournie
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ecom_db',      # Le nom créé à l'étape 1
+        'USER': 'DarkDeku',    # L'utilisateur créé
+        'PASSWORD': 'DarkDeku@',
+        'HOST': 'localhost',      # Ou '127.0.0.1'
+        'PORT': '5432',           # Port par défaut de Postgres
     }
-
+}
 # --- VALIDATION MOT DE PASSE ---
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -123,8 +113,3 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Sécurité supplémentaire en production
-if not DEBUG:
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
