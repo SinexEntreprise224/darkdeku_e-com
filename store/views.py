@@ -16,6 +16,9 @@ def index(request):
     categories = Category.objects.all()
     return render(request, "home.html", context={"products": products, 'categories': categories})
 
+def error_404(request, exception=None):
+    return render(request, '404.html', status=404)
+
 # --- Auth ---
 def login(request):
    if request.method == "POST":

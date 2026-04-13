@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %} Page Introuvable — DarkDeku {% endblock %}
+
+{% block content %}
+<style>
+    .error-container {
+        height: 70vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .error-code {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 10rem;
+        font-weight: 700;
+        color: var(--gold);
+        line-height: 1;
+        margin-bottom: 0;
+        text-shadow: 0 0 30px rgba(193, 161, 97, 0.2);
+        animation: pulse 2s infinite ease-in-out;
+    }
+
+    .error-message {
+        font-size: 1.5rem;
+        color: var(--text-main);
+        margin-bottom: 2rem;
+        max-width: 500px;
+    }
+
+    .error-description {
+        color: var(--text-muted);
+        margin-bottom: 3rem;
+        font-style: italic;
+    }
+
+    .btn-back {
+        background: var(--gold);
+        color: var(--dark-bg);
+        padding: 1rem 2.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        transition: 0.3s;
+        border: 1px solid var(--gold);
+    }
+
+    .btn-back:hover {
+        background: transparent;
+        color: var(--gold);
+        transform: translateY(-3px);
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.05); opacity: 0.8; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+        .error-code { font-size: 7rem; }
+    }
+</style>
+
+<div class="error-container">
+    <h1 class="error-code">404</h1>
+    <p class="error-message">Oups ! La page que tu cherches a disparu dans les méandres de l'IA.</p>
+    <p class="error-description">Il semble que le lien soit mort ou que l'adresse ait été saisie de travers.</p>
+
+    <div class="error-actions">
+        <a href="{% url 'index' %}" class="btn-back">
+            <i class="bi bi-house-door"></i> Retour à l'accueil
+        </a>
+    </div>
+</div>
+{% endblock %}
