@@ -51,6 +51,8 @@ def register(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Inscription réussie!")
+            users = User.objects.filter(role="admin")
+            add_notifications(request, users, "Un nouvelle utilisateur inscrit!")
             return redirect('login')
 
         messages.error(request, "Une erreur est survenue")
@@ -84,6 +86,8 @@ def add_category(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Catégorie ajoutée avec succès !")
+            users = User.objects.filter(role="user")
+            add_notifications(request, users, "Une nouvelle catégorie viens d'être ajoutée!")
             return redirect("index")
         else:
             messages.error(request, "Veuillez corriger les erreurs ci-dessous.")
@@ -128,7 +132,7 @@ def delete_category(request, category_id):
 
 
 # --- product ---
-@login_required
+
 def all_products(request):
     products = Product.objects.filter(is_active=True)
     return render(request, "product/all.html", {"products": products})
@@ -169,6 +173,8 @@ def add_product(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Produit ajouté avec succès!')
+            users = User.objects.filter(role="user")
+            add_notifications(request, users, "Un nouveau produit viens d'être ajouté!")
             return redirect("index")
         messages.error(request, 'Veuillez corriger les erreurs ci-dessous.')
     else:
@@ -187,6 +193,8 @@ def edit_product(request, slug):
         if form.is_valid():
             form.save()
             messages.success(request, "Les informations de ce produit ont bien été mise à jour !")
+            users = User.objects.filter(role="user")
+            add_notifications(request, users, f"Les informations de {product.name} ont été mise à jour !")
             return redirect("index")
         else:
             return render(request, "product/edit.html", {"form": form, "product": product})
@@ -202,6 +210,8 @@ def delete_product(request, slug):
         product.is_active = False
         product.save()
         messages.success(request, "Produit supprimé avec succès !")
+        users = User.objects.filter(role="user")
+        add_notifications(request, users, f"{product.name} a été supprimée du catalogue!")
         return redirect("index")
     return render(request, "product/delete.html", {"product": product})
 
@@ -335,6 +345,8 @@ def order(request, slug):
         product.save()
 
         messages.success(request, "La commande a bien été lancée !")
+        users = User.objects.filter(role="admin")
+        add_notifications(request, users, f"Une nouvelle commande viens d'être effectuée!")
         return redirect("index")
 
     else:
@@ -578,7 +590,7 @@ def edit_password(request):
     return render(request, "user/edit_password.html", {"form": form})
 
 @login_required
-def load_orders(request):
+def all_orders(request):
     orders = Order.objects.filter(user=request.user)
     status = "Confirmée" if orders.ordered else "En attente"
     return render(request, "order/all.html", {"orders": orders, "status": status})
@@ -601,3 +613,14 @@ def delete_notifications(request, notification_id):
     notification.delete()
     return redirect("index")
 
+
+# --- Loaders ---
+
+@login_required
+def load_notifications_count(request):
+    notifications_count = Notification.objects.filter(user=request.user, is_read=False).count
+    return render(request, "loaders/notifications_count.html", {"notifications_counts": notifications_count})
+
+def load_notifications(request):
+    notifications = Notification.objects.filter(user=request.user)
+    return render(request, "loaders/notifications.html", {"notifications": notifications})

@@ -1,10 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %} {% block title %}Notifications | DarkDeku{% endblock %}
 
-</body>
-</html>
+{% block content %}
+<div class="notifications-header">
+    <h2 class="cormorant-title"><i class="bi bi-bell-fill"></i> Centre de Notifications</h2>
+    <p class="text-muted">Restez informé de vos dernières activités</p>
+</div>
+
+<div class="notif-container-scroll">
+    <div id="notif-container"
+         hx-get="{% url 'load_notifications' %}"
+         hx-trigger="every 1s"
+         class="notif-grid">
+        {% include "loaders/notifications.html" %}
+    </div>
+</div>
+
+<style>
+    .notifications-header { margin-bottom: 2rem; }
+    .cormorant-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 2rem;
+        color: var(--gold);
+    }
+
+    .notif-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    /* Style des cartes de notification */
+    .notif-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.3s ease;
+        animation: fadeIn 0.4s ease forwards;
+    }
+
+    .notif-card:hover {
+        background: var(--surface-2);
+        border-color: var(--gold-dim);
+        transform: translateX(5px);
+    }
+
+    .notif-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--gold-dim);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--gold);
+        font-size: 1.2rem;
+    }
+
+    .notif-content { flex: 1; }
+    .notif-text { color: var(--text-main); font-size: 0.95rem; margin-bottom: 0.2rem; }
+    .notif-time { color: var(--text-muted); font-size: 0.75rem; }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* État vide */
+    .empty-notif {
+        text-align: center;
+        padding: 3rem;
+        border: 2px dashed var(--border);
+        border-radius: 15px;
+        color: var(--text-muted);
+    }
+</style>
+{% endblock %}

@@ -67,10 +67,14 @@ urlpatterns = [
     path('user/index/', profile, name='profile'),
     path('user/delete_account/', delete_account, name='delete_account'),
     path('user/edit_password/', edit_password, name='edit_password'),
-    path('user/order/', load_orders, name='all_orders')
+    path('user/order/', all_orders, name='all_orders'),
 
     # --- Notifications ---
     path('notifications/all', all_notifications, name='all_notifications'),
+
+    # --- loaders ---
+    path('htmx/notifications_count', load_notifications_count, name='load_notifications_count'),
+    path('htmx/notifications', load_notifications, name='load_notifications'),
 
 ]
 

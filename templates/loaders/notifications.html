@@ -1,0 +1,36 @@
+{% for notification in notifications %}
+    <div class="notif-card {% if not notification.is_read %}unread{% endif %}">
+        <div class="notif-icon">
+            <i class="bi bi-chat-left-dots"></i> </div>
+
+        <div class="notif-content">
+            <p class="notif-text">{{ notification.text }}</p>
+            <span class="notif-time">
+                <i class="bi bi-clock"></i>
+                {{ notification.created_at|timesince }} ago
+            </span>
+        </div>
+
+        {% if not notification.is_read %}
+            <div class="unread-dot"></div>
+        {% endif %}
+    </div>
+{% empty %}
+    <div class="empty-notif">
+        <i class="bi bi-moon-stars" style="font-size: 2rem; display: block; margin-bottom: 1rem;"></i>
+        <p>Aucune notification pour le moment.</p>
+    </div>
+{% endfor %}
+
+<style>
+    .unread-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--gold);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--gold);
+    }
+    .unread {
+        border-left: 3px solid var(--gold);
+    }
+</style>
