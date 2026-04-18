@@ -68,9 +68,12 @@ urlpatterns = [
     path('user/delete_account/', delete_account, name='delete_account'),
     path('user/edit_password/', edit_password, name='edit_password'),
     path('user/order/', load_orders, name='all_orders')
+
+    # --- Notifications ---
+    path('notifications/all', all_notifications, name='all_notifications'),
+
 ]
 
-# Servir les fichiers Media et Static en mode DEBUG
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

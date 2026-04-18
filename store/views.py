@@ -7,7 +7,7 @@ from store.decorators import admin_required
 from store.forms import SignupForm, LoginForm, CategoryForm, ProductForm, MakeForm, TagForm, EditUserProfileForm, \
     EditPasswordForm
 from django.db.models import Sum, F
-from store.models import Product, Order, Cart, Category, Make, Tag, User
+from store.models import Product, Order, Cart, Category, Make, Tag, User, Notification
 
 # Create your views here.
 
@@ -582,3 +582,22 @@ def load_orders(request):
     orders = Order.objects.filter(user=request.user)
     status = "Confirmée" if orders.ordered else "En attente"
     return render(request, "order/all.html", {"orders": orders, "status": status})
+
+# --- Notifications ---
+
+def add_notifications(request, users, text):
+    for user in users:
+        notifications = Notification.objects.create(user=user, text=text)
+        notifications.save()
+
+@login_required
+def all_notifications(request):
+    notifications = Notification.objects.filter(user=request.user)
+    return render(request, "notifications.html", {"notifications": notifications})
+
+@login_required
+def delete_notifications(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notification.delete()
+    return redirect("index")
+
