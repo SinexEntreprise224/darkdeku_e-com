@@ -75,6 +75,8 @@ urlpatterns = [
     # --- loaders ---
     path('htmx/notifications_count', load_notifications_count, name='load_notifications_count'),
     path('htmx/notifications', load_notifications, name='load_notifications'),
+    path('htmx/products', load_products, name='load_products'),
+    path('htmx/detail/<slug:slug>/', load_details, name='load_details'),
 
 ]
 

@@ -1,0 +1,141 @@
+{% if not products %}
+    <div class="empty-state">
+        <div class="empty-icon"><i class="bi bi-box-seam"></i></div>
+        <h4>Arrivage imminent</h4>
+        <p>Notre catalogue est en cours de mise à jour.</p>
+    </div>
+{% else %}
+    <div class="products-grid">
+        {% for product in products %}
+            <div class="product-card" onclick="window.location='{% url 'detail' product.slug %}'">
+                
+                <div class="product-img-wrap">
+                    {% if product.partner %}
+                        <div class="partner-badge">
+                            <i class="bi bi-patch-check-fill"></i> {{ product.partner.name }}
+                        </div>
+                    {% endif %}
+
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                    {% else %}
+                        <div class="product-img-placeholder"><i class="bi bi-image"></i></div>
+                    {% endif %}
+                    
+                    <div class="card-overlay">
+                        <span class="view-text">Voir Détails</span>
+                    </div>
+                </div>
+
+                <div class="product-body">
+                    <h2 class="product-name">{{ product.name }}</h2>
+                    <div class="product-footer">
+                        <p class="product-price">
+                            {{ product.price }} <span class="currency">FG</span>
+                        </p>
+                        <i class="bi bi-arrow-right gold-arrow"></i>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<style>
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+        width: 100%;
+        animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0.7; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .product-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(201, 168, 76, 0.6);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    }
+
+    .product-img-wrap {
+        height: 260px;
+        position: relative;
+        overflow: hidden;
+        background: #1a1a1e;
+    }
+
+    .product-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.8s ease;
+    }
+
+    .product-card:hover img { transform: scale(1.1); }
+
+    .card-overlay {
+        position: absolute; inset: 0;
+        background: rgba(14,14,16,0.5);
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0; transition: 0.3s; backdrop-filter: blur(2px);
+    }
+
+    .product-card:hover .card-overlay { opacity: 1; }
+
+    .view-text {
+        border: 1px solid var(--gold);
+        color: var(--text-main);
+        padding: 0.5rem 1.2rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        border-radius: 4px;
+    }
+
+    .product-body { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
+    
+    .product-name { 
+        font-size: 1.2rem; 
+        font-family: 'Cormorant Garamond', serif; 
+        margin-bottom: 0.8rem; 
+        color: var(--text-main);
+    }
+
+    .product-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+
+    .product-price { color: var(--gold); font-weight: 700; font-size: 1.15rem; }
+    .currency { font-size: 0.7rem; color: var(--text-muted); margin-left: 2px; }
+
+    .gold-arrow { color: var(--gold); font-size: 1.2rem; opacity: 0.5; }
+
+    .partner-badge {
+        position: absolute; top: 12px; left: 12px; z-index: 5;
+        background: var(--gold); color: var(--dark-bg);
+        padding: 5px 10px; border-radius: 5px; font-size: 0.65rem; font-weight: 800;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 5rem 2rem;
+        border: 1px dashed var(--border);
+        border-radius: 20px;
+        background: rgba(201, 168, 76, 0.02);
+    }
+</style>

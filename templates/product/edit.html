@@ -60,7 +60,6 @@
         letter-spacing: 0.05em;
     }
 
-    /* Cible les inputs, textareas et selects */
     .product-form input:not([type="submit"]), 
     .product-form textarea, 
     .product-form select {
@@ -123,7 +122,6 @@
         color: #c0564a;
     }
 
-    /* Aide pour l'upload de fichier */
     .product-form input[type="file"] {
         padding: 0.5rem 0;
         border: none;
@@ -149,7 +147,7 @@
                 Enregistrer les modifications
             </button>
         </form>
-        <a href="{% url 'detail' product.slug %}" class="cancel-link">
+        <a href="/product/detail/{{ product.slug }}" class="cancel-link">
             <i class="bi bi-x-circle"></i> Annuler la modification
         </a>
     </div>

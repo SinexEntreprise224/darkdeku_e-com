@@ -624,3 +624,12 @@ def load_notifications_count(request):
 def load_notifications(request):
     notifications = Notification.objects.filter(user=request.user)
     return render(request, "loaders/notifications.html", {"notifications": notifications})
+
+def load_products(request):
+    products = Product.objects.all()
+    return render(request, "loaders/products.html", {"products": products})
+
+def load_details(request, slug):
+    product = get_object_or_404(Product, slug=slug)
+    return render(request, "loaders/details.html", {"product": product})
+    
