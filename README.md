@@ -18,47 +18,87 @@ Application e-commerce développée avec Django.
 - PostgreSQL
 - django-crispy-forms + crispy-bootstrap5
 
-## Installation locale
+## Installation locale (détaillée)
 
-1. Cloner le dépôt.
-2. Créer et activer un environnement virtuel.
-3. Installer les dépendances :
+### 1) Pré-requis
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+Avant de commencer, assurez-vous d’avoir :
 
-4. Créer un fichier `.env` à la racine du projet avec :
+- Python 3 installé
+- `pip` disponible
+- PostgreSQL installé et démarré
 
-   ```env
-   SECRET_KEY=your-secret-key
-   DEBUG=True
-   ALLOWED_HOSTS=127.0.0.1,localhost
+### 2) Récupérer le projet
 
-   DB_NAME=your_db_name
-   DB_USER=your_db_user
-   DB_PASSWORD=your_db_password
-   DB_HOST=localhost
-   DB_PORT=5432
-   ```
+```bash
+git clone <url-du-repo>
+cd darkdeku_e-com
+```
 
-5. Appliquer les migrations :
+### 3) Créer et activer un environnement virtuel
 
-   ```bash
-   python manage.py migrate
-   ```
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
 
-6. Créer un superutilisateur (optionnel mais recommandé) :
+Sur Windows (PowerShell) :
 
-   ```bash
-   python manage.py createsuperuser
-   ```
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
 
-7. Lancer le serveur :
+### 4) Installer les dépendances Python
 
-   ```bash
-   python manage.py runserver
-   ```
+```bash
+pip install -r requirements.txt
+```
+
+### 5) Préparer la base PostgreSQL
+
+Créez une base de données PostgreSQL et un utilisateur ayant les droits sur cette base.
+
+Exemple de valeurs à prévoir :
+
+- nom de la base : `darkdeku_db`
+- utilisateur : `darkdeku_user`
+- mot de passe : `mot_de_passe`
+
+### 6) Créer le fichier d’environnement `.env`
+
+À la racine du projet, créez un fichier `.env` :
+
+```env
+SECRET_KEY=votre-cle-secrete-django
+DEBUG=True
+ALLOWED_HOSTS=127.0.0.1,localhost
+
+DB_NAME=darkdeku_db
+DB_USER=darkdeku_user
+DB_PASSWORD=mot_de_passe
+DB_HOST=localhost
+DB_PORT=5432
+```
+
+### 7) Appliquer les migrations
+
+```bash
+python manage.py migrate
+```
+
+### 8) Créer un compte administrateur (recommandé)
+
+```bash
+python manage.py createsuperuser
+```
+
+### 9) Lancer le serveur de développement
+
+```bash
+python manage.py runserver
+```
+
+Puis ouvrez : `http://127.0.0.1:8000/`
 
 ## Routes principales
 
